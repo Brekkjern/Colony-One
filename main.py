@@ -1,7 +1,8 @@
-# Global variables for the colony
+# The state of the colony
 colony = {
     'power': 50, 'morale': 50, 'food': 50, }
 
+# The state of the population
 population = {
     'children': 0,
     'workers': {
@@ -16,40 +17,35 @@ population = {
 
 
 class Structure(object):
-    health = 100
+    """Object model for structures."""
+
+    def __init__(self, health=100):
+        self.destroyed = False
+        self.health = health
 
     def update(self):
-        pass
+        return None
 
     def damage(self, dmg):
         self.health -= dmg
-
         if self.health <= 0:
-            pass
+            self.destroyed = True
 
 
 class Building(Structure):
-    power = {
-        'passive': 0, 'active': 0
-    }
+    """Object model for buildings, based on structures."""
 
-    workers = {
-        'max': 0, 'assigned': 0
-    }
-
-    task = {
-        'goal': 0, 'product': "Item"
-    }
-
-    productivity = {
-        'speed': 1, 'modifier': 0.5, 'progress': 0
-    }
+    def __init__(self):
+        self.power = {'passive': 0, 'active': 0}
+        self.workers = {'max': 0, 'assigned': 0}
+        self.task = {'goal': 0, 'product': 'Item'}
+        self.productivity = {'speed': 1, 'modifier': 0.5, 'progress': 0}
 
     def update(self):
         return super(Building, self).update()
 
     def do_work(self):
-        for i in range(0, self.workers["assigned"]+1):
+        for count in range(self.workers['assigned']):
             if colony['power'] >= self.power['active']:
                 self.productivity['progress'] += self.productivity['speed'] * self.productivity['modifier'] * colony[
                     'morale'] / 100
