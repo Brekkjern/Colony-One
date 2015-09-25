@@ -5,18 +5,8 @@ game_difficulty = {'morale': 0.5}
 colony = {
     'power': 50, 'morale': 50, 'food': 50, }
 
-# The state of the population
-population = {
-    'children': 0,
-    'workers': {
-        'assigned': 0,
-        'total': 0
-    },
-    'scientists': {
-        'assigned': 0,
-        'total': 0
-    }
-}
+# List of population
+population = []
 
 
 class Colonist(object):
