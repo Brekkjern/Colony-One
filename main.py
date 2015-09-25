@@ -73,8 +73,8 @@ class Building(Structure):
         else:
             return False
 
-    def do_work(self):
-        for worker in len(self.workers):
+    def produce(self):
+        for worker in self.workers:
             if colony['power'] >= self.power['active']:
                 self.productivity['progress'] += worker.do_work()
                 colony['power'] -= self.power['active']
