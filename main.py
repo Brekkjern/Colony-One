@@ -16,6 +16,26 @@ population = {
 }
 
 
+class Colonist(object):
+    """Object model for colonists."""
+
+    def __init__(self, health=100, age=0, education=None, deathThreshold=100):
+        self.health = health
+        self.dead = False
+        self.age = age
+        self.education = education
+        self.deathThreshold = deathThreshold
+
+    def do_work(self):
+        return None
+
+    def increase_age(self):
+        return None
+
+    def calc_health(self):
+        return None
+
+
 class Structure(object):
     """Object model for structures."""
 
