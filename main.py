@@ -1,3 +1,6 @@
+# Game difficulty modifiers
+gamedifficulty = {'morale': 0.5}
+
 # The state of the colony
 colony = {
     'power': 50, 'morale': 50, 'food': 50, }
@@ -27,7 +30,7 @@ class Colonist(object):
         self.deathThreshold = deathThreshold
 
     def do_work(self):
-        return None
+        return gamedifficulty['morale'] * colony['morale'] * self.health
 
     def increase_age(self):
         return None
