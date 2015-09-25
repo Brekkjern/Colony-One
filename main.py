@@ -67,15 +67,18 @@ class Building(Structure):
         return super(Building, self).update()
 
     def add_worker(self, worker):
-        if len(self.workers) < self.max_workers:
-            self.workers.append(worker)
-            return True
-        else:
+        if len(self.workers) >= self.max_workers:
             return False
+
+        self.workers.append(worker)
+        return True
+
+    def is_available_power(self):
+        return colony['power'] >= self.power['active']
 
     def produce(self):
         for worker in self.workers:
-            if colony['power'] >= self.power['active']:
+            if self.is_available_power():
                 self.productivity['progress'] += worker.do_work()
                 colony['power'] -= self.power['active']
 
@@ -83,3 +86,5 @@ class Building(Structure):
         if self.productivity['progress'] > self.task['goal']:
             self.productivity['progress'] -= self.task['goal']
             return self.task['product']
+
+
