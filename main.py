@@ -1,5 +1,5 @@
 # Game difficulty modifiers
-gamedifficulty = {'morale': 0.5}
+game_difficulty = {'morale': 0.5}
 
 # The state of the colony
 colony = {
@@ -22,21 +22,18 @@ population = {
 class Colonist(object):
     """Object model for colonists."""
 
-    def __init__(self, health=100, age=0, education=None, deathThreshold=100):
+    def __init__(self, health=100, age=0, education=None, death_threshold=100):
         self.health = health
         self.dead = False
         self.age = age
         self.education = education
-        self.deathThreshold = deathThreshold
+        self.deathThreshold = death_threshold
+
+    def update(self):
+        pass
 
     def do_work(self):
-        return gamedifficulty['morale'] * colony['morale'] * self.health
-
-    def increase_age(self):
-        return None
-
-    def calc_health(self):
-        return None
+        return game_difficulty['morale'] * colony['morale'] * self.health
 
 
 class Structure(object):
@@ -59,6 +56,7 @@ class Building(Structure):
     """Object model for buildings, based on structures."""
 
     def __init__(self):
+        super().__init__()
         self.power = {'passive': 0, 'active': 0}
         self.workers = {'max': 0, 'assigned': 0}
         self.task = {'goal': 0, 'product': 'Item'}
