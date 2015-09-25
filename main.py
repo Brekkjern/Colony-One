@@ -55,21 +55,28 @@ class Structure(object):
 class Building(Structure):
     """Object model for buildings, based on structures."""
 
-    def __init__(self):
+    def __init__(self, max_workers=0):
         super().__init__()
         self.power = {'passive': 0, 'active': 0}
-        self.workers = {'max': 0, 'assigned': 0}
+        self.workers = []
+        self.max_workers = max_workers
         self.task = {'goal': 0, 'product': 'Item'}
         self.productivity = {'speed': 1, 'modifier': 0.5, 'progress': 0}
 
     def update(self):
         return super(Building, self).update()
 
+    def add_worker(self, worker):
+        if len(self.workers) < self.max_workers:
+            self.workers.append(worker)
+            return True
+        else:
+            return False
+
     def do_work(self):
-        for count in range(self.workers['assigned']):
+        for worker in len(self.workers):
             if colony['power'] >= self.power['active']:
-                self.productivity['progress'] += self.productivity['speed'] * self.productivity['modifier'] * colony[
-                    'morale'] / 100
+                self.productivity['progress'] += worker.do_work()
                 colony['power'] -= self.power['active']
 
     def check_progress(self):
