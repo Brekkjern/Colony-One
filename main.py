@@ -1,4 +1,5 @@
 from Entities.building import Building
+from Entities.colonist import Colonist
 
 # Game difficulty modifiers
 game_difficulty = {'morale': 0.5}
@@ -9,5 +10,3 @@ colony = {
 
 # List of population
 population = []
-
-
