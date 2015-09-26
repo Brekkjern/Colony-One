@@ -4,12 +4,8 @@ from Entities.structure import Structure
 class Building(Structure):
     """Object model for buildings, based on structures."""
 
-    def __init__(self, colony, max_workers=0):
+    def __init__(self):
         super().__init__()
-        self.colony = colony
-        self.power = {'passive': 0, 'active': 0}
-        self.workers = []
-        self.max_workers = max_workers
         self.task = {'goal': 0, 'product': 'Item'}
         self.productivity = {'speed': 1, 'modifier': 0.5, 'progress': 0}
 
@@ -17,10 +13,10 @@ class Building(Structure):
         return super(Building, self).update()
 
     def add_worker(self, worker):
-        if len(self.workers) >= self.max_workers:
+        if len(self.assigned_workers) >= self.max_workers:
             return False
 
-        self.workers.append(worker)
+        self.assigned_workersworkers.append(worker)
         return True
 
     def is_available_power(self):

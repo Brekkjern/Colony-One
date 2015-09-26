@@ -11,7 +11,6 @@ class Colonist(object):
         self.dead = False
         self.age = age
 
-
     def update(self):
         # Add a day to the colonist age.
         self.age += 1
