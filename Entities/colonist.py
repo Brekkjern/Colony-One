@@ -1,7 +1,7 @@
 class Colonist(object):
     """Object model for colonists."""
 
-    def __init__(self, game_settings, morale = 100, health = 100, age = 0, death_threshold = 100,
+    def __init__(self, game_settings, morale = 100, health = 100, age = 0,
                  education = {'engineering': 0, 'science': 0}):
         self.game_settings = game_settings
         self.morale = morale
@@ -9,7 +9,6 @@ class Colonist(object):
         self.dead = False
         self.age = age
         self.education = education
-        self.deathThreshold = death_threshold
 
     def update(self):
         # Add a day to the colonist age.
