@@ -1,5 +1,6 @@
 from Entities.structure import Structure
 
+
 class Building(Structure):
     """Object model for buildings, based on structures."""
 
