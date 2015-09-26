@@ -1,4 +1,4 @@
-from Entities.building import Building
+from Entities.structure import Structure
 from Entities.colonist import Colonist
 
 # Game difficulty modifiers
