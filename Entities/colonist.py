@@ -1,7 +1,9 @@
 class Colonist(object):
     """Object model for colonists."""
 
-    def __init__(self, health=100, age=0, education=None, death_threshold=100):
+    def __init__(self, game_difficulty, morale = 100, health=100, age=0, education=None, death_threshold=100):
+        self.game_difficulty = game_difficulty
+        self.morale = morale
         self.health = health
         self.dead = False
         self.age = age
@@ -12,7 +14,7 @@ class Colonist(object):
         pass
 
     def do_work(self):
-        return game_difficulty['morale'] * colony['morale'] * self.health
+        return self.game_difficulty['morale'] * self.morale * self.health
 
     def is_worker(self):
         return self.age >= 16
