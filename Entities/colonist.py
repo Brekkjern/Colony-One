@@ -1,3 +1,5 @@
+import math
+
 class Colonist(object):
     """Object model for colonists."""
 
@@ -14,6 +16,12 @@ class Colonist(object):
     def update(self):
         # Add a day to the colonist age.
         self.age += 1
+
+        # Check to see if colonist is older than life expectancy.
+        self.dead = self.age >= self.get_life_expectancy(self.health)
+
+    def get_life_expectancy(self, health):
+        return (80 * self.game_settings['year']) / ( 1 + math.e() ** (-0.1 * health))
 
     def do_work(self):
         return self.game_settings['morale'] * self.morale * self.health

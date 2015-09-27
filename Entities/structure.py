@@ -8,9 +8,11 @@ class Structure(object):
         self.power = {'passive': 0, 'active': 0}
         self.assigned_workers = []
         self.max_workers = max_workers
+        self.task = {'goal': 0, 'product': 'Item'}
+        self.productivity = {'speed': 1, 'modifier': 0.5, 'progress': 0}
 
     def update(self):
-        return None
+        self.produce()
 
     def damage(self, dmg):
         self.health -= dmg
@@ -21,14 +23,14 @@ class Structure(object):
         if len(self.assigned_workers) >= self.max_workers:
             return False
 
-        self.assigned_workersworkers.append(worker)
+        self.assigned_workers.append(worker)
         return True
 
     def is_available_power(self):
         return self.colony['power'] >= self.power['active']
 
     def produce(self):
-        for worker in self.workers:
+        for worker in self.assigned_workers:
             if self.is_available_power():
                 self.productivity['progress'] += worker.do_work()
                 self.colony['power'] -= self.power['active']
@@ -37,3 +39,4 @@ class Structure(object):
         if self.productivity['progress'] > self.task['goal']:
             self.productivity['progress'] -= self.task['goal']
             return self.task['product']
+
