@@ -25,10 +25,11 @@ class Colonist(object):
         return (80 * self.game_settings['year']) / (1 + math.e() ** (-0.1 * self.health))
 
     def fertility(self):
-        # This is a standard parabolic function expressed as y = a (x - h)^2 + k
+        # This is a standard parabolic function expressed as y = a (x - h)^2 + (bx) + k
         # "a" determines the slope of the graph
         # "h" determines the point where the graph turns
         # "k" determines the lowest number "y" can be
+        # "b" moves the bottom point of the parabola in a reverse parabolic arc
         # y = 0.25(x-35)^2+(-0.3x)+20
 
         age = self.age / self.game_settings['year']
