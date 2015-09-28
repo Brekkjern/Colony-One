@@ -19,6 +19,11 @@ class Structure(object):
         if self.health <= 0:
             self.destroyed = True
 
+    def repair(self, dmg):
+        self.health += dmg
+        if self.health >= 100:
+            self.health = 100
+
     def add_worker(self, worker):
         if len(self.assigned_workers) >= self.max_workers:
             return False
