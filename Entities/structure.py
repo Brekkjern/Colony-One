@@ -26,12 +26,9 @@ class Structure(object):
         self.assigned_workers.append(worker)
         return True
 
-    def is_available_power(self):
-        return self.colony['power'] >= self.power['active']
-
     def produce(self):
         for worker in self.assigned_workers:
-            if self.is_available_power():
+            if self.colony.is_available_power(self.power['active']):
                 self.productivity['progress'] += worker.do_work()
                 self.colony['power'] -= self.power['active']
 
