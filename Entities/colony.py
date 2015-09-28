@@ -23,5 +23,9 @@ class Colony(object):
         for building in self.buildings:
             building.update()
 
-    def is_available_power(self, requested):
-        return self.power >= requested
+    def request_power(self, rPower):
+        if self.power >= rPower:
+            self.power -= rPower
+            return True
+
+        return False

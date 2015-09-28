@@ -33,9 +33,8 @@ class Structure(object):
 
     def produce(self):
         for worker in self.assigned_workers:
-            if self.colony.is_available_power(self.power['active']):
+            if self.colony.request_power(self.power['active']):
                 self.productivity['progress'] += worker.do_work()
-                self.colony['power'] -= self.power['active']
 
     def check_progress(self):
         if self.productivity['progress'] > self.task['goal']:
