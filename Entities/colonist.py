@@ -7,6 +7,7 @@ class Colonist(object):
     def __init__(self, game_settings, morale = 100, health = 100, age = 0, education = None):
         if not education:
             education = {'engineering': 0, 'science': 0}
+
         self.education = education
         self.game_settings = game_settings
         self.morale = morale
