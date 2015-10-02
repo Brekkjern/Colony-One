@@ -25,6 +25,7 @@ class Structure(object):
             self.health = 100
 
     def add_worker(self, worker):
+        # Add a worker to the building. Requires a worker object.
         if len(self.assigned_workers) >= self.max_workers:
             return False
 

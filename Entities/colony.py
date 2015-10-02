@@ -6,7 +6,7 @@ class Colony(object):
 
     def __init__(self, colonists=None, buildings=None):
         if not colonists:
-           colonists = []
+            colonists = []
 
         if not buildings:
             buildings = []
@@ -23,9 +23,10 @@ class Colony(object):
         for building in self.buildings:
             building.update()
 
-    def request_power(self, rPower):
-        if self.power >= rPower:
-            self.power -= rPower
+    def request_power(self, power):
+        # Drain a select amount of power from the colony if it's available.
+        if self.power >= power:
+            self.power -= power
             return True
 
         return False
