@@ -42,3 +42,5 @@ class Structure(object):
             self.productivity['progress'] -= self.task['goal']
             return self.task['product']
 
+    def needs_power(self):
+        return bool(self.power)
