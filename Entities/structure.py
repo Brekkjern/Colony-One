@@ -1,11 +1,11 @@
 class Structure(object):
     """Object model for structures."""
 
-    def __init__(self, colony, health=100, max_workers=0):
+    def __init__(self, colony, powered=None, health=100, max_workers=0):
         self.destroyed = False
         self.health = health
         self.colony = colony
-        self.power = {'passive': 0, 'active': 0}
+        self.powered = powered
         self.assigned_workers = []
         self.max_workers = max_workers
         self.task = {'goal': 0, 'product': 'Item'}
@@ -34,7 +34,7 @@ class Structure(object):
 
     def produce(self):
         for worker in self.assigned_workers:
-            if self.colony.request_power(self.power['active']):
+            if self.colony.request_power(self.powered.active):
                 self.productivity['progress'] += worker.do_work()
 
     def check_progress(self):
@@ -43,4 +43,4 @@ class Structure(object):
             return self.task['product']
 
     def needs_power(self):
-        return bool(self.power)
+        return bool(self.powered)
