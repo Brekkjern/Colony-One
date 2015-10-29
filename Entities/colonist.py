@@ -15,15 +15,17 @@ class Colonist(object):
         self.dead = False
         self.age = age
 
-    def update(self):
+    def update(self, tick):
         # Add a day to the colonist age.
         self.age += 1
 
         # Check to see if colonist is older than life expectancy.
         self.dead = self.age >= self.life_expectancy()
+        if self.dead:
+            print("DEBUG: Colonist died on tick {}.".format(tick))
 
     def life_expectancy(self):
-        return (80 * self.game_settings['year']) / (1 + math.e() ** (-0.1 * self.health))
+        return ((80 * self.game_settings['year']) / ( 1 + math.e ** (-0.1 * self.health)))
 
     def fertility(self):
         # This is a standard parabolic function expressed as y = a (x - h)^2 + (bx) + k
@@ -40,7 +42,7 @@ class Colonist(object):
         return self.game_settings['morale'] * self.morale * self.health
 
     def is_worker(self):
-        return self.age >= (16 * self.game_settings['time']['year'])
+        return self.age >= (16 * self.game_settings['year'])
 
     def is_engineer(self):
         return self.education['engineering'] == 100

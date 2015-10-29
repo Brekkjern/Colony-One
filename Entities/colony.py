@@ -4,7 +4,7 @@ from Entities.colonist import Colonist
 class Colony(object):
     """Object model for Colony objects"""
 
-    def __init__(self, colonists=None, buildings=None):
+    def __init__(self, game_settings, colonists=None, buildings=None):
         if not colonists:
             colonists = []
 
@@ -15,10 +15,14 @@ class Colony(object):
         self.buildings = buildings
         self.power = 0
         self.food = 0
+        self.game_settings = game_settings
 
-    def update(self):
+    def update(self, tick):
         for colonist in self.colonists:
-            colonist.update()
+            colonist.update(tick)
+
+            if colonist.dead:
+                self.colonists.remove(colonist)
 
         for building in self.buildings:
             building.update()
@@ -30,3 +34,6 @@ class Colony(object):
             return True
 
         return False
+
+    def new_colonist(self):
+        self.colonists.append(Colonist(self.game_settings))
