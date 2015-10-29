@@ -18,14 +18,17 @@ class Colony(object):
         self.game_settings = game_settings
 
     def update(self, tick):
+        alive_colonists = []
         for colonist in self.colonists:
             colonist.update(tick)
 
-            if colonist.dead:
-                self.colonists.remove(colonist)
+            if not colonist.dead:
+                alive_colonists.append(colonist)
 
         for building in self.buildings:
             building.update()
+
+        self.colonists = alive_colonists
 
     def request_power(self, power):
         # Drain a select amount of power from the colony if it's available.
