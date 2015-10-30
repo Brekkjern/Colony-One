@@ -25,7 +25,7 @@ class Colonist(object):
             print("DEBUG: Colonist died on tick {}.".format(tick))
 
     def life_expectancy(self):
-        return ((80 * self.game_settings['year']) / ( 1 + math.e ** (-0.1 * self.health)))
+        return 80 * self.game_settings['year'] / ( 1 + math.e ** (-0.1 * self.health))
 
     def fertility(self):
         # This is a standard parabolic function expressed as y = a (x - h)^2 + (bx) + k
