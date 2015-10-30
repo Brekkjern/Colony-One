@@ -18,16 +18,20 @@ class Colony(object):
         self.game_settings = game_settings
 
     def update(self, tick):
+
         alive_colonists = []
+
         for colonist in self.colonists:
             colonist.update(tick)
 
+            # Add living colonists to table
             if not colonist.dead:
                 alive_colonists.append(colonist)
 
         for building in self.buildings:
             building.update()
 
+        # Replace old table with new that only contains living colonists
         self.colonists = alive_colonists
 
     def request_power(self, power):
@@ -40,3 +44,6 @@ class Colony(object):
 
     def new_colonist(self):
         self.colonists.append(Colonist(self.game_settings))
+
+    def new_building(self):
+        self.buildings.append(Structure(self.game_settings))

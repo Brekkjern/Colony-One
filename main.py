@@ -15,6 +15,10 @@ for i in range(0, 10):
     test_colony.new_colonist()
     i += 1
 
+for i in range(0, 10):
+    print("DEBUG: Add structure to colony.")
+    test_colony.new_building()
+    i += 1
 
 while test_colony.colonists:
     tick += 1
