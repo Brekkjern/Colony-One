@@ -13,6 +13,7 @@ class Colony(object):
 
         self.colonists = colonists
         self.buildings = buildings
+        self.power_generators = []
         self.power = 0
         self.food = 0
         self.game_settings = game_settings
@@ -47,4 +48,8 @@ class Colony(object):
         self.colonists.append(Colonist(self.game_settings))
 
     def new_building(self):
-        self.buildings.append(Structure(self.game_settings))
+        building = Structure(self.game_settings)
+        self.buildings.append(building)
+
+        if building.pwr_generator:
+            self.power_generators.append(building)

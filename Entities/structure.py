@@ -1,10 +1,11 @@
 class Structure(object):
     """Object model for structures."""
 
-    def __init__(self, powered=None, health=100, max_workers=0):
+    def __init__(self, requires_power=None, pwr_generator=None,  health=100, max_workers=0):
         self.destroyed = False
         self.health = health
-        self.powered = powered
+        self.requires_power = requires_power
+        self.pwr_generator = pwr_generator
         self.max_workers = max_workers
         self.task = {'goal': 0, 'product': 'Item'}
         self.productivity = {'speed': 1, 'modifier': 0.5, 'progress': 0}
