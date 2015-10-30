@@ -23,3 +23,4 @@ for i in range(0, 10):
 while test_colony.colonists:
     tick += 1
     test_colony.update(tick)
+

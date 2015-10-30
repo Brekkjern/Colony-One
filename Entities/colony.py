@@ -29,7 +29,8 @@ class Colony(object):
                 alive_colonists.append(colonist)
 
         for building in self.buildings:
-            building.update()
+            if self.request_power(building.power):
+                building.update()
 
         # Replace old table with new that only contains living colonists
         self.colonists = alive_colonists
