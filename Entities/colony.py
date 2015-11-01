@@ -45,7 +45,9 @@ class Colony(object):
         return False
 
     def new_colonist(self):
-        self.colonists.append(Colonist(self.game_settings))
+        colonist = Colonist(self.game_settings)
+        self.colonists.append(colonist)
+        return colonist
 
     def new_building(self):
         building = Structure(self.game_settings)
@@ -53,3 +55,5 @@ class Colony(object):
 
         if building.pwr_generator:
             self.power_generators.append(building)
+
+        return building
