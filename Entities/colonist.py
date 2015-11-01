@@ -16,13 +16,14 @@ class Colonist(object):
         self.age = age
 
     def update(self, tick):
-        # Add a day to the colonist age.
-        self.age += 1
-
         # Check to see if colonist is older than life expectancy.
         self.dead = self.age >= self.life_expectancy()
         if self.dead:
             print("DEBUG: Colonist died on tick {}.".format(tick))
+
+    def tick(self, tick):
+        # Add a day to the colonist age.
+        self.age += 1
 
     def life_expectancy(self):
         return 80 * self.game_settings['year'] / ( 1 + math.e ** (-0.1 * self.health))
