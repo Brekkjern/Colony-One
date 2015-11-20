@@ -1,10 +1,10 @@
 class Structure(object):
     """Object model for structures."""
 
-    def __init__(self, requires_power=None, pwr_generator=None,  health=100, max_workers=0):
+    def __init__(self, powered=None, pwr_generator=None,  health=100, max_workers=0):
         self.destroyed = False
         self.health = health
-        self.requires_power = requires_power
+        self.powered = powered
         self.pwr_generator = pwr_generator
         self.max_workers = max_workers
         self.task = {'goal': 0, 'product': 'Item'}
@@ -33,4 +33,7 @@ class Structure(object):
             return self.task['product']
 
     def needs_power(self):
-        return bool(self.powered)
+        if self.powered is None:
+            return False
+        else:
+            return True

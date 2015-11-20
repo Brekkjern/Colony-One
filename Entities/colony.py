@@ -30,8 +30,9 @@ class Colony(object):
                 alive_colonists.append(colonist)
 
         for building in self.buildings:
-            if self.request_power(building.power):
-                building.update()
+            if building.needs_power():
+                if self.request_power(building.powered.active):
+                    building.update()
 
         # Replace old table with new that only contains living colonists
         self.colonists = alive_colonists
@@ -50,7 +51,7 @@ class Colony(object):
         return colonist
 
     def new_building(self):
-        building = Structure(self.game_settings)
+        building = Structure()
         self.buildings.append(building)
 
         if building.pwr_generator:

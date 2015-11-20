@@ -11,7 +11,7 @@ print("DEBUG: Create Colony.")
 test_colony = Colony(game_settings)
 
 for i in range(0, 10):
-    print("DEBUG: Add colonists to colony.")
+    # print("DEBUG: Add colonists to colony.")
     test_colony.new_colonist()
     i += 1
 
