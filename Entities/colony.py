@@ -23,6 +23,7 @@ class Colony(object):
         alive_colonists = []
 
         for colonist in self.colonists:
+            colonist.tick(tick)
             colonist.update(tick)
 
             # Add living colonists to table
