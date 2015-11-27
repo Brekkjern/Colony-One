@@ -1,5 +1,5 @@
 import math
-from .. import conf
+import conf
 
 
 class Colonist(object):

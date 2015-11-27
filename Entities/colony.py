@@ -1,6 +1,6 @@
 from Entities.structure import Structure
 from Entities.colonist import Colonist
-from .. import conf
+import conf
 
 
 class Colony(object):
@@ -25,8 +25,8 @@ class Colony(object):
         alive_colonists = []
 
         for colonist in self.colonists:
-            colonist.tick(conf.tick)
-            colonist.update(conf.tick)
+            colonist.tick()
+            colonist.update()
 
             # Add living colonists to table
             if not colonist.dead:
