@@ -1,5 +1,7 @@
 from Entities.structure import Structure
 from Entities.colonist import Colonist
+import conf
+
 
 class Colony(object):
     """Object model for Colony objects"""
@@ -18,13 +20,13 @@ class Colony(object):
         self.food = 0
         self.game_settings = game_settings
 
-    def update(self, tick):
+    def update(self):
 
         alive_colonists = []
 
         for colonist in self.colonists:
-            colonist.tick(tick)
-            colonist.update(tick)
+            colonist.tick()
+            colonist.update()
 
             # Add living colonists to table
             if not colonist.dead:

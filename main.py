@@ -1,14 +1,8 @@
-from Entities.structure import Structure
-from Entities.colonist import Colonist
 from Entities.colony import Colony
-
-tick = 0
-
-# Game difficulty modifiers
-game_settings = {'year': 365, 'morale': 0.5}
+import conf
 
 print("DEBUG: Create Colony.")
-test_colony = Colony(game_settings)
+test_colony = Colony(conf.game_settings)
 
 for i in range(0, 10):
     # print("DEBUG: Add colonists to colony.")
@@ -21,7 +15,7 @@ for i in range(0, 10):
     i += 1
 
 while test_colony.colonists:
-    tick += 1
-    print(tick)
-    test_colony.update(tick)
+    conf.tick += 1
+    print(conf.tick)
+    test_colony.update()
 

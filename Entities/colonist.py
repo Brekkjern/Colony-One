@@ -1,4 +1,5 @@
 import math
+import conf
 
 
 class Colonist(object):
@@ -15,13 +16,13 @@ class Colonist(object):
         self.dead = False
         self.age = age
 
-    def update(self, tick):
+    def update(self):
         # Check to see if colonist is older than life expectancy.
         self.dead = self.age >= self.life_expectancy()
         if self.dead:
-            print("DEBUG: Colonist died on tick {}.".format(tick))
+            print("DEBUG: Colonist died on tick {}.".format(conf.tick))
 
-    def tick(self, tick):
+    def tick(self):
         # Add a day to the colonist age.
         self.age += 1
 
