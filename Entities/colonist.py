@@ -25,6 +25,9 @@ class Colonist(object):
         # Add a day to the colonist age.
         self.age += 1
 
+    def change_health(self, target, divider):
+        return (target - self.health) / divider
+
     def life_expectancy(self):
         return 80 * self.game_settings['year'] / (1 + math.exp(-0.1 * self.health))
 
