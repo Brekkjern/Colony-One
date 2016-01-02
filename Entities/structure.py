@@ -11,7 +11,7 @@ class Structure(object):
         self.productivity = {'speed': 1, 'modifier': 0.5, 'progress': 0}
 
     def update(self):
-        self.produce()
+        self.work()
 
     def damage(self, dmg):
         self.health -= dmg
@@ -23,7 +23,7 @@ class Structure(object):
         if self.health >= 100:
             self.health = 100
 
-    def produce(self, workers):
+    def work(self, workers):
         for worker in workers:
             self.productivity['progress'] += worker.do_work()
 
@@ -54,3 +54,9 @@ class Pwr_GeneratorStructure(object):
     def __init__(self, amount=0, priority=0):
         self.amount = amount
         self.priority = priority
+
+class Agridome(Structure):
+    """Object model for food producing structure."""
+
+    def __init__(self):
+        super(Agridome, self).__init__()
