@@ -1,12 +1,15 @@
 class Structure(object):
     """Object model for structures."""
 
-    def __init__(self, powered=None, pwr_generator=None,  health=100, max_workers=0):
+    def __init__(self, powered=None, pwr_generator=None, health=100, workers=None):
+        if not workers:
+            workers = {'minimum': 0, 'maximum': 0}
+
         self.destroyed = False
         self.health = health
         self.powered = powered
         self.pwr_generator = pwr_generator
-        self.max_workers = max_workers
+        self.workers = workers
         self.task = {'goal': 0, 'product': 'Item'}
         self.productivity = {'speed': 1, 'modifier': 0.5, 'progress': 0}
 
@@ -30,7 +33,7 @@ class Structure(object):
     def check_progress(self):
         if self.productivity['progress'] > self.task['goal']:
             self.productivity['progress'] -= self.task['goal']
-            return self.task['product']
+            self.produce()
 
     def needs_power(self):
         if self.powered is None:
@@ -40,7 +43,7 @@ class Structure(object):
 
 
 class PoweredStructure(object):
-    """Object model for powered structures."""
+    """Object model for powered structures. Used in composition together with Structure class."""
 
     def __init__(self, passive, active, powered=False):
         self.passive = passive
@@ -56,7 +59,12 @@ class Pwr_GeneratorStructure(object):
         self.priority = priority
 
 class Agridome(Structure):
-    """Object model for food producing structure."""
+    """Object model for food producing structure. Used in composition together with Structure class."""
 
-    def __init__(self):
+    def __init__(self, capacity=0, prodmod=1):
         super(Agridome, self).__init__()
+        self.capacity = capacity
+        self.productionmod = prodmod
+
+    def produce(self):
+        self.capacity += 1 * self.productionmod
