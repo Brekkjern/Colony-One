@@ -52,14 +52,14 @@ class PoweredStructure(object):
 
 
 class Pwr_GeneratorStructure(object):
-    """Object model for powered structures."""
+    """Object model for powered structures. Used in composition together with Structure class."""
 
     def __init__(self, amount=0, priority=0):
         self.amount = amount
         self.priority = priority
 
 class Agridome(Structure):
-    """Object model for food producing structure. Used in composition together with Structure class."""
+    """Object model for food producing structure. Child class of Structure."""
 
     def __init__(self, capacity=0, production_modifier=1):
         super(Agridome, self).__init__()
