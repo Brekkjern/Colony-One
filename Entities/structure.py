@@ -31,7 +31,7 @@ class Structure(object):
             self.productivity['progress'] += worker.do_work()
 
     def check_progress(self):
-        if self.productivity['progress'] > self.task['goal']:
+        if self.productivity['progress'] >= self.task['goal']:
             self.productivity['progress'] -= self.task['goal']
             self.produce()
 
