@@ -61,10 +61,10 @@ class Pwr_GeneratorStructure(object):
 class Agridome(Structure):
     """Object model for food producing structure. Used in composition together with Structure class."""
 
-    def __init__(self, capacity=0, prodmod=1):
+    def __init__(self, capacity=0, production_modifier=1):
         super(Agridome, self).__init__()
         self.capacity = capacity
-        self.productionmod = prodmod
+        self.production_modifier = production_modifier
 
     def produce(self):
-        self.capacity += 1 * self.productionmod
+        self.capacity += 1 * self.production_modifier
