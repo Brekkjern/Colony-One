@@ -50,14 +50,6 @@ class PoweredStructure(object):
         self.active = active
         self.powered = powered
 
-
-class Pwr_GeneratorStructure(object):
-    """Object model for powered structures. Used in composition together with Structure class."""
-
-    def __init__(self, amount=0, priority=0):
-        self.amount = amount
-        self.priority = priority
-
 class Agridome(Structure):
     """Object model for food producing structure. Child class of Structure."""
 
@@ -69,3 +61,13 @@ class Agridome(Structure):
 
     def produce(self):
         self.capacity += 1 * self.production_modifier
+
+class Generator(Structure):
+    """Object model for power generating structure. Child class of Structure."""
+
+    def __int__(self, watt=0):
+        super(Generator, self).__init__()
+        self.watt = watt
+
+    def produce(self):
+        return self.watt

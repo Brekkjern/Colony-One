@@ -6,7 +6,7 @@ import conf
 class Colony(object):
     """Object model for Colony objects"""
 
-    def __init__(self, game_settings, colonists=None, buildings=None, agridomes=None):
+    def __init__(self, game_settings, colonists=None, buildings=None, agridomes=None, generators=None):
         if not colonists:
             colonists = []
 
@@ -16,15 +16,21 @@ class Colony(object):
         if not agridomes:
             agridomes = []
 
+        if not generators:
+            generators = []
+
         self.colonists = colonists
         self.buildings = buildings
         self.agridomes = agridomes
-        self.power_generators = []
+        self.generators = generators
         self.power = 0
         self.food = 0
         self.game_settings = game_settings
 
     def update(self):
+
+        # Calculate what power is available
+        self.calculate_power()
 
         alive_colonists = []
 
@@ -69,10 +75,17 @@ class Colony(object):
         building = Structure()
         self.buildings.append(building)
 
-        if building.pwr_generator:
-            self.power_generators.append(building)
-
         if building.__class__.__name__ == "Agridome":
             self.agridomes.append(building)
 
+        if building.__class__.__name__ == "Generator":
+            self.generators.append(building)
+
         return building
+
+    def calculate_power(self):
+        # Reset power before calculating power again.
+        self.power = 0
+
+        for generator in self.generators:
+            self.power += generator.produce()
