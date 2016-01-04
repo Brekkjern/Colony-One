@@ -30,7 +30,7 @@ class Colonist(object):
         return (target - self.health) / divider
 
     def life_expectancy(self):
-        return 80 * self.game_settings['year'] / (1 + math.exp(-0.1 * self.health))
+        return 80 * self.game_settings['ticks_per_year'] / (1 + math.exp(-0.1 * self.health))
 
     def fertility(self):
         # This is a standard parabolic function expressed as y = a (x - h)^2 + (bx) + k
@@ -40,14 +40,14 @@ class Colonist(object):
         # "b" moves the bottom point of the parabola in a reverse parabolic arc
         # y = 0.25(x-35)^2+(-0.3x)+20
 
-        age = self.age / self.game_settings['year']
+        age = self.age / self.game_settings['ticks_per_year']
         return (0.25 * (age - 35) ** 2) + (-0.3 * age) + 15
 
     def do_work(self):
         return self.game_settings['morale'] * self.morale * self.health
 
     def is_worker(self):
-        return self.age >= (16 * self.game_settings['year'])
+        return self.age >= (16 * self.game_settings['ticks_per_year'])
 
     def is_engineer(self):
         return self.education['engineering'] == 100
