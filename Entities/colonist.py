@@ -5,7 +5,7 @@ import conf
 class Colonist(object):
     """Object model for colonists."""
 
-    def __init__(self, morale = 100, health = 100, age = 0, education = None):
+    def __init__(self, morale = 100, health = 100, age = 0, education = None, hunger = 0):
         if not education:
             education = {'engineering': 0, 'science': 0}
 
@@ -14,6 +14,7 @@ class Colonist(object):
         self.health = health
         self.dead = False
         self.age = age
+        self.hunger = hunger
 
     def update(self):
         # Check to see if colonist is older than life expectancy.
@@ -24,6 +25,9 @@ class Colonist(object):
     def tick(self):
         # Add a day to the colonist age.
         self.age += 1
+
+        # Reduce hunger.
+        self.hunger -= 1
 
     def change_health(self, target, divider):
         return (target - self.health) / divider
