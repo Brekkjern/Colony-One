@@ -49,12 +49,12 @@ class Colonist(object):
     #    'stats':{'wisdom': -2, 'logic': -2, 'endurance': 2}
     #}
 
-    def assign_trait(self, dict):
+    def assign_trait(self, new_trait):
         for trait in self.traits:
-            if dict['name'] not in trait:
-                for stat, value in dict['stats']:
+            if new_trait['name'] not in trait['name']:
+                for stat, value in new_trait['stats'].items():
                     self.stats[stat] += value
-                self.traits.append(dict)
+                self.traits.append(new_trait)
                 return True
             else:
                 return False
