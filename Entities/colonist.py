@@ -51,7 +51,7 @@ class Colonist(object):
 
     def assign_trait(self, dict):
         for trait in self.traits:
-            if not dict['name'] in trait:
+            if dict['name'] not in trait:
                 for stat, value in dict['stats']:
                     self.stats[stat] += value
                 self.traits.append(dict)
