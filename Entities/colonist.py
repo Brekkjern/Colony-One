@@ -17,7 +17,7 @@ class Colonist(object):
         self.hunger = hunger
 
         # Stats
-        self.stats = {
+        self.abilities = {
             'wisdom': 10,
             'logic': 10,
             'focus': 10,
@@ -51,13 +51,13 @@ class Colonist(object):
 
     def assign_trait(self, new_trait):
         for trait in self.traits:
-            if new_trait['name'] not in trait['name']:
-                for stat, value in new_trait['stats'].items():
-                    self.stats[stat] += value
-                self.traits.append(new_trait)
-                return True
-            else:
+            if new_trait['name'] == trait['name']:
                 return False
+
+        for ability, value in new_trait['stats'].items():
+            self.abilities[ability] += value
+        self.traits.append(new_trait)
+        return True
 
     def change_health(self, target, divider):
         return (target - self.health) / divider
