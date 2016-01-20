@@ -50,8 +50,8 @@ class Colonist(object):
     #}
 
     def assign_trait(self, new_trait):
-        for trait in self.traits:
-            if new_trait['name'] == trait['name']:
+        for existing_trait in self.traits:
+            if new_trait['name'] == existing_trait['name']:
                 return False
 
         for ability, value in new_trait['stats'].items():
