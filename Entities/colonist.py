@@ -16,6 +16,20 @@ class Colonist(object):
         self.age = age
         self.hunger = hunger
 
+        # Stats
+        self.stats = {
+            'wisdom': 10,
+            'logic': 10,
+            'focus': 10,
+            'endurance': 10,
+            'dexterity': 10
+        }
+
+        # Traits
+        self.traits = []
+
+
+
     def update(self):
         # Check to see if colonist is older than life expectancy.
         self.dead = self.age >= self.life_expectancy()
@@ -28,6 +42,22 @@ class Colonist(object):
 
         # Reduce hunger.
         self.hunger -= 1
+
+    # Example dict for traits:
+    #test_trait = {
+    #    'name': "TraitName",
+    #    'stats':{'wisdom': -2, 'logic': -2, 'endurance': 2}
+    #}
+
+    def assign_trait(self, dict):
+        for trait in self.traits:
+            if not dict['name'] in trait:
+                for stat, value in dict['stats']:
+                    self.stats[stat] += value
+                self.traits.append(dict)
+                return True
+            else:
+                return False
 
     def change_health(self, target, divider):
         return (target - self.health) / divider
