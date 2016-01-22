@@ -25,10 +25,12 @@ class Colonist(object):
             'dexterity': 10
         }
 
+        self.skills = {
+
+        }
+
         # Traits
         self.traits = []
-
-
 
     def update(self):
         # Check to see if colonist is older than life expectancy.
@@ -44,10 +46,11 @@ class Colonist(object):
         self.hunger -= 1
 
     # Example dict for traits:
-    #test_trait = {
+    # test_trait = {
     #    'name': "TraitName",
-    #    'abilities':{'wisdom': -2, 'logic': -2, 'endurance': 2}
-    #}
+    #    'abilities':{'wisdom': -2, 'logic': -2, 'endurance': 2},
+    #    'skills':{'something': 2, 'something_else': -1}
+    # }
 
     def assign_trait(self, new_trait):
         for existing_trait in self.traits:
@@ -56,6 +59,10 @@ class Colonist(object):
 
         for ability, value in new_trait['abilities'].items():
             self.abilities[ability] += value
+
+        for skill, value in new_trait['skills'].items():
+            self.abilities[skill] += value
+
         self.traits.append(new_trait)
         return True
 
