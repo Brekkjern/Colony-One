@@ -49,10 +49,21 @@ class Colonist(object):
     # test_trait = {
     #    'name': "TraitName",
     #    'abilities':{'wisdom': -2, 'logic': -2, 'endurance': 2},
-    #    'skills':{'something': 2, 'something_else': -1}
+    #    'skills':{'something': 2, 'something_else': -1},
+    #    'recessive': False,
+    #    'inheritance_chance': 0.2
     # }
 
     def assign_trait(self, new_trait):
+        """Parses new_trait and adds it to the list of traits of the colonist.
+        Also modifies abilities and scores based on the stat.
+
+        :param new_trait: a dictionary containing the traits to assign a colonist
+        :type new_trait: dict
+        :returns: boolean
+        :rtype: bool
+        """
+
         for existing_trait in self.traits:
             if new_trait['name'] == existing_trait['name']:
                 return False
