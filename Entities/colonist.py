@@ -30,7 +30,7 @@ class Colonist(object):
         }
 
         # Traits
-        self.traits = []
+        self.active_traits = []
 
     def update(self):
         # Check to see if colonist is older than life expectancy.
@@ -64,7 +64,7 @@ class Colonist(object):
         :rtype: bool
         """
 
-        for existing_trait in self.traits:
+        for existing_trait in self.active_traits:
             if new_trait['name'] == existing_trait['name']:
                 return False
 
@@ -74,7 +74,7 @@ class Colonist(object):
         for skill, value in new_trait['skills'].items():
             self.abilities[skill] += value
 
-        self.traits.append(new_trait)
+        self.active_traits.append(new_trait)
         return True
 
     def change_health(self, target, divider):
