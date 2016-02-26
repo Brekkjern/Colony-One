@@ -62,7 +62,7 @@ class Colonist(object):
             self.skill[skill] += value
 
     def assign_trait(self, new_trait):
-        if not new_trait in self.traits:
+        if new_trait not in self.traits:
             self.traits.append(new_trait)
             self.apply_trait_effect(new_trait)
             return True
