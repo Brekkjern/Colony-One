@@ -50,7 +50,7 @@ class Colonist(object):
             self.abilities[ability] += value
 
         for skill, value in trait.skills.items():
-            self.skill[skill] += value
+            self.skills[skill] += value
 
     def assign_trait(self, new_trait):
         if new_trait not in self.traits:
