@@ -45,15 +45,6 @@ class Colonist(object):
         # Reduce hunger.
         self.hunger -= 1
 
-    # Example dict for traits:
-    # test_trait = {
-    #    'name': "TraitName",
-    #    'abilities':{'wisdom': -2, 'logic': -2, 'endurance': 2},
-    #    'skills':{'something': 2, 'something_else': -1},
-    #    'recessive': False,
-    #    'inheritance_chance': 0.2
-    # }
-
     def apply_trait_effect(self, trait):
         for ability, value in trait.abilities.items():
             self.abilities[ability] += value
