@@ -30,7 +30,7 @@ class Colonist(object):
         }
 
         # Traits
-        self.active_traits = []
+        self.traits = []
 
     def update(self):
         # Check to see if colonist is older than life expectancy.
@@ -54,28 +54,20 @@ class Colonist(object):
     #    'inheritance_chance': 0.2
     # }
 
-    def assign_trait(self, new_trait):
-        """Parses new_trait and adds it to the list of traits of the colonist.
-        Also modifies abilities and scores based on the stat.
-
-        :param new_trait: a dictionary containing the traits to assign a colonist
-        :type new_trait: dict
-        :returns: boolean
-        :rtype: bool
-        """
-
-        for existing_trait in self.active_traits:
-            if new_trait['name'] == existing_trait['name']:
-                return False
-
-        for ability, value in new_trait['abilities'].items():
+    def apply_trait_effect(self, trait):
+        for ability, value in trait.abilities.items():
             self.abilities[ability] += value
 
-        for skill, value in new_trait['skills'].items():
-            self.abilities[skill] += value
+        for skill, value in trait.skills.items():
+            self.skill[skill] += value
 
-        self.active_traits.append(new_trait)
-        return True
+    def assign_trait(self, new_trait):
+        if not new_trait in self.traits:
+            self.traits.append(new_trait)
+            self.apply_trait_effect(new_trait)
+            return True
+        else:
+            return False
 
     def change_health(self, target, divider):
         return (target - self.health) / divider
