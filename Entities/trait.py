@@ -13,7 +13,7 @@ class Trait(object):
             self.skills = {}
 
         self.name = name
-        self.recessive = dominant
+        self.dominant = dominant
         self.chance = inheritance_chance
 
     def inherit(self):
