@@ -46,11 +46,12 @@ class Colonist(object):
         self.hunger -= 1
 
     def apply_trait_effect(self, trait):
-        for ability, modifier in trait.abilities.items():
-            self.abilities[ability] += modifier
+        if trait.active:
+            for ability, modifier in trait.abilities.items():
+                self.abilities[ability] += modifier
 
-        for skill, modifier in trait.skills.items():
-            self.skills[skill] += modifier
+            for skill, modifier in trait.skills.items():
+                self.skills[skill] += modifier
 
     def assign_trait(self, new_trait):
         if new_trait not in self.traits:
