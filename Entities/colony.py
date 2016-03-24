@@ -6,7 +6,7 @@ import conf
 class Colony(object):
     """Object model for Colony objects"""
 
-    def __init__(self, game_settings, colonists=None, buildings=None, agridomes=None, generators=None):
+    def __init__(self, game_settings, colonists=None, buildings=None, agridomes=None, generators=None, stockpile=None):
         if not colonists:
             colonists = []
 
@@ -19,10 +19,14 @@ class Colony(object):
         if not generators:
             generators = []
 
+        if not stockpile:
+            stockpile = []
+
         self.colonists = colonists
         self.buildings = buildings
         self.agridomes = agridomes
         self.generators = generators
+        self.stockpile = stockpile
         self.power = 0
         self.food = 0
         self.game_settings = game_settings
