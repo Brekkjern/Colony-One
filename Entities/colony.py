@@ -47,12 +47,13 @@ class Colony(object):
                 alive_colonists.append(colonist)
 
         for building in self.buildings:
-            if building.needs_power():
-                if self.request_power(building.powered.active):
-                    building.update()
+            self.add_to_stockpile(building.check_progress())
 
         # Replace old table with new that only contains living colonists
         self.colonists = alive_colonists
+
+    def add_to_stockpile(self, item):
+            self.stockpile.append(item)
 
     def request_power(self, power):
         # Drain a select amount of power from the colony if it's available.

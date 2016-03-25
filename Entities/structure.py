@@ -1,20 +1,15 @@
 class Structure(object):
     """Object model for structures."""
 
-    def __init__(self, powered=None, pwr_generator=None, health=100, workers=None):
-        if not workers:
-            workers = {'minimum': 0, 'maximum': 0}
-
+    def __init__(self, powered=None, health=100, task=None):
         self.destroyed = False
         self.health = health
         self.powered = powered
-        self.pwr_generator = pwr_generator
-        self.workers = workers
-        self.task = {'goal': 0, 'product': 'Item'}
-        self.productivity = {'speed': 1, 'modifier': 0.5, 'progress': 0}
+        self.task = task
 
     def update(self):
         self.work()
+        self.check_progress()
 
     def damage(self, dmg):
         self.health -= dmg
@@ -26,48 +21,19 @@ class Structure(object):
         if self.health >= 100:
             self.health = 100
 
-    def work(self, workers):
-        for worker in workers:
-            self.productivity['progress'] += worker.do_work()
+    def work(self, work):
+        self.task.perform_task(work)
 
     def check_progress(self):
-        if self.productivity['progress'] >= self.task['goal']:
-            self.productivity['progress'] -= self.task['goal']
-            self.produce()
+        if self.task.check_progress():
+            output = self.task.return_output()
+            self.task = None
+            return output
+        else:
+            return None
 
     def needs_power(self):
         if self.powered is None:
             return False
         else:
             return True
-
-
-class PoweredStructure(object):
-    """Object model for powered structures. Used in composition together with Structure class."""
-
-    def __init__(self, passive, active, powered=False):
-        self.passive = passive
-        self.active = active
-        self.powered = powered
-
-class Agridome(Structure):
-    """Object model for food producing structure. Child class of Structure."""
-
-    def __init__(self, capacity=0, inventory=0, production_modifier=1):
-        super(Agridome, self).__init__()
-        self.capacity = capacity
-        self.inventory = inventory
-        self.production_modifier = production_modifier
-
-    def produce(self):
-        self.capacity += 1 * self.production_modifier
-
-class Generator(Structure):
-    """Object model for power generating structure. Child class of Structure."""
-
-    def __int__(self, watt=0):
-        super(Generator, self).__init__()
-        self.watt = watt
-
-    def produce(self):
-        return self.watt
