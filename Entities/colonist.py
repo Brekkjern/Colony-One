@@ -65,6 +65,7 @@ class Colonist(object):
         return (target - self.health) / divider
 
     def life_expectancy(self):
+        # Years / (1 + 10^(-0.1 * health))
         return 80 * conf.game_settings['ticks_per_year'] / (1 + math.exp(-0.1 * self.health))
 
     def fertility(self):
