@@ -1,4 +1,6 @@
-class Structure(object):
+from Entities.entity import Entity
+
+class Structure(Entity):
     """Object model for structures."""
 
     def __init__(self, powered=None, health=100, task=None):

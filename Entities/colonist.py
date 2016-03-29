@@ -1,8 +1,8 @@
 import math
 import conf
+from Entities.entity import Entity
 
-
-class Colonist(object):
+class Colonist(Entity):
     """Object model for colonists."""
 
     def __init__(self, morale = 100, health = 100, age = 0, education = None, hunger = 0):

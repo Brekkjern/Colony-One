@@ -1,9 +1,10 @@
 from Entities.structure import Structure
 from Entities.colonist import Colonist
+from Entities.entity import Entity
 import conf
 
 
-class Colony(object):
+class Colony(Entity):
     """Object model for Colony objects"""
 
     def __init__(self, game_settings, colonists=None, buildings=None, agridomes=None, generators=None, stockpile=None):
