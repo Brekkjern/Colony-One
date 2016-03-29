@@ -4,6 +4,7 @@ class Structure(Entity):
     """Object model for structures."""
 
     def __init__(self, powered=None, health=100, task=None):
+        super(Structure, self).__init__()
         self.destroyed = False
         self.health = health
         self.powered = powered
