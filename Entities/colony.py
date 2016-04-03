@@ -7,8 +7,8 @@ import conf
 class Colony(Entity):
     """Object model for Colony objects"""
 
-    def __init__(self, game_settings, colonists=None, buildings=None, agridomes=None, generators=None, stockpile=None):
-        super(Colony, self).__init__()
+    def __init__(self, entity_id, game_settings, colonists=None, buildings=None, agridomes=None, generators=None, stockpile=None):
+        super(Colony, self).__init__(entity_id)
         if not colonists:
             colonists = []
 

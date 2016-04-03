@@ -1,7 +1,8 @@
 from Entities.structure import Structure
 from Entities.colonist import Colonist
 
-class Entity_Master(object):
+
+class EntityMaster(object):
     def __init__(self, last_entity_id=0, entities=None,  member_list=None):
 
         if not entities:
@@ -59,5 +60,5 @@ class Entity_Master(object):
     def new_colonist(self, colony: int) -> object:
         colonist = Colonist(self.next_entity_id())
         self.add_entity(colonist)
-        self.add_entity_to_colony(colony)
+        self.add_entity_to_colony(colonist.entity_id, colony)
         return colonist

@@ -2,6 +2,7 @@ import math
 import conf
 from Entities.entity import Entity
 
+
 class Colonist(Entity):
     """Object model for colonists."""
 
