@@ -2,7 +2,6 @@ from Entities.structure import Structure
 from Entities.colonist import Colonist
 
 class Entity_Master(object):
-
     def __init__(self, last_entity_id=0, entities=None,  member_list=None):
 
         if not entities:
@@ -20,29 +19,27 @@ class Entity_Master(object):
         return self.last_entity_id
 
     def get_entity(self, entity_id: int) -> object:
-        for i, entity in enumerate(self.entities):
+        for entity in self.entities:
             if entity.entity_id == entity_id:
                 return entity
 
-    def add_entity_to_colony(self, colonist: object, colony: int) -> bool:
-        if self.get_entity_colony(colonist):
-            return False
-        else:
-            self.member_list.append([colony, colonist.entity_id])
-            return True
+    def add_entity_to_colony(self, entity: object, colony: int) -> bool:
+        if self.get_entity_colony(entity):
+            self.remove_entity_from_colony(entity)
 
-    def remove_entity_from_colony(self, colonist: object) -> bool:
-        colony = self.get_entity_colony(colonist)
-        if colony:
-            self.colonies[colony].remove(colonist)
-            return True
-        else:
-            return False
+        self.member_list.append([colony, entity.entity_id])
 
-    def get_entity_colony(self, colonist: object) -> int:
-        for colony in self.colony_member_list:
-            if colonist in colony:
-                return colony
+    def remove_entity_from_colony(self, entity_id: int) -> bool:
+        for entry in self.member_list:
+            for colony, entity in entry:
+                if entity == entity_id:
+                    return self.member_list.remove(entry)
+
+    def get_entity_colony(self, entity_id: int) -> int:
+        for entry in self.member_list:
+            for colony, entity in entry:
+                if entity == entity_id:
+                    return colony
 
     def add_entity(self, entity: object) -> bool:
         return self.entities.append(entity)
