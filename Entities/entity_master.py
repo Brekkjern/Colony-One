@@ -14,6 +14,18 @@ class Entity_Master(object):
         self.last_entity_id = last_entity_id
         self.member_list = member_list
 
+    def tick(self):
+        for entity in sorted(self.entities, reverse = True):
+            entity.tick()
+
+            if not entity.alive:
+                self.remove_entity_from_colony(entity.entity_id)
+                del self.entities[entity]
+
+    def update(self):
+        for entity in self.entities:
+            entity.update()
+
     def next_entity_id(self) -> int:
         self.last_entity_id += 1
         return self.last_entity_id

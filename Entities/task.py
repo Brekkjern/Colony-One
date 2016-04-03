@@ -7,11 +7,12 @@ class Task(object):
         self.progress = progress
         self.goal = goal
 
-    def perform_task(self, amount):
+    def perform_task(self, amount: float) -> float:
         self.progress += amount
+        return self.progress
 
-    def check_progress(self):
+    def check_progress(self) -> bool:
         return self.progress >= self.goal
 
-    def return_output(self):
+    def return_output(self) -> object:
         return self.output

@@ -38,21 +38,8 @@ class Colony(Entity):
         # Calculate what power is available
         self.calculate_power()
 
-        alive_colonists = []
-
-        for colonist in self.colonists:
-            colonist.tick()
-            colonist.update()
-
-            # Add living colonists to table
-            if not colonist.dead:
-                alive_colonists.append(colonist)
-
         for building in self.buildings:
             self.add_to_stockpile(building.check_progress())
-
-        # Replace old table with new that only contains living colonists
-        self.colonists = alive_colonists
 
     def add_to_stockpile(self, item):
             self.stockpile.append(item)

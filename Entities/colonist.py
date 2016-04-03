@@ -14,7 +14,6 @@ class Colonist(Entity):
         self.education = education
         self.morale = morale
         self.health = health
-        self.dead = False
         self.age = age
         self.hunger = hunger
 
@@ -35,10 +34,7 @@ class Colonist(Entity):
         self.traits = []
 
     def update(self):
-        # Check to see if colonist is older than life expectancy.
-        self.dead = self.age >= self.life_expectancy()
-        if self.dead:
-            print("DEBUG: Colonist died on tick {}.".format(conf.tick))
+        pass
 
     def tick(self):
         # Add a day to the colonist age.
@@ -46,6 +42,11 @@ class Colonist(Entity):
 
         # Reduce hunger.
         self.hunger -= 1
+
+        self.alive = self.age < self.life_expectancy()
+
+        if not self.alive:
+            print("DEBUG: Colonist {} died on tick {}.".format(self.entity_id, conf.tick))
 
     def apply_trait_effect(self, trait):
         if trait.active:
