@@ -5,8 +5,8 @@ from Entities.entity import Entity
 class Colonist(Entity):
     """Object model for colonists."""
 
-    def __init__(self, morale = 100, health = 100, age = 0, education = None, hunger = 0):
-        super(Colonist, self).__init__()
+    def __init__(self, entity_id, morale = 100, health = 100, age = 0, education = None, hunger = 0):
+        super(Colonist, self).__init__(entity_id)
 
         if not education:
             education = {'engineering': 0, 'science': 0}
