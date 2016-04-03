@@ -3,7 +3,7 @@ from Entities.colonist import Colonist
 
 
 class EntityMaster(object):
-    def __init__(self, last_entity_id=0, entities=None,  member_list=None):
+    def __init__(self, last_entity_id = 0, entities = None, member_list = None):
 
         if not entities:
             entities = []

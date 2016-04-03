@@ -7,7 +7,8 @@ import conf
 class Colony(Entity):
     """Object model for Colony objects"""
 
-    def __init__(self, entity_id, game_settings, colonists=None, buildings=None, agridomes=None, generators=None, stockpile=None):
+    def __init__(self, entity_id, game_settings, colonists = None, buildings = None, agridomes = None,
+                 generators = None, stockpile = None):
         super(Colony, self).__init__(entity_id)
         if not colonists:
             colonists = []
@@ -42,7 +43,7 @@ class Colony(Entity):
             self.add_to_stockpile(building.check_progress())
 
     def add_to_stockpile(self, item):
-            self.stockpile.append(item)
+        self.stockpile.append(item)
 
     def request_power(self, power):
         # Drain a select amount of power from the colony if it's available.
