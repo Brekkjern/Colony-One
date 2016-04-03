@@ -23,11 +23,11 @@ class Entity_Master(object):
             if entity.entity_id == entity_id:
                 return entity
 
-    def add_entity_to_colony(self, entity: object, colony: int) -> bool:
+    def add_entity_to_colony(self, entity: int, colony: int) -> bool:
         if self.get_entity_colony(entity):
             self.remove_entity_from_colony(entity)
 
-        self.member_list.append([colony, entity.entity_id])
+        return self.member_list.append([colony, entity])
 
     def remove_entity_from_colony(self, entity_id: int) -> bool:
         for entry in self.member_list:
