@@ -11,8 +11,8 @@ class EntityMaster(object):
         if not member_list:
             member_list = []
 
-        self.entities = entities
         self.last_entity_id = last_entity_id
+        self.entities = entities
         self.member_list = member_list
 
     def tick(self):
