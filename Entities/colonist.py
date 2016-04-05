@@ -35,9 +35,12 @@ class Colonist(Entity):
         self.traits = []
 
     def update(self):
-        pass
+        super(Colonist, self).update()
+        if self.health > 0:
+            self.alive = False
 
     def tick(self):
+        super(Colonist, self).tick()
         # Add a day to the colonist age.
         self.age += 1
 

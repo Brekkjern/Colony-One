@@ -35,12 +35,16 @@ class Colony(Entity):
         self.game_settings = game_settings
 
     def update(self):
+        super(Colony, self).update()
 
         # Calculate what power is available
         self.calculate_power()
 
         for building in self.buildings:
             self.add_to_stockpile(building.check_progress())
+
+    def tick(self):
+        super(Colony, self).tick()
 
     def add_to_stockpile(self, item):
         self.stockpile.append(item)

@@ -19,13 +19,13 @@ class EntityMaster(object):
         for entity in sorted(self.entities, reverse = True):
             entity.tick()
 
-            if not entity.alive:
-                self.remove_entity_from_colony(entity.entity_id)
-                del self.entities[entity]
-
     def update(self):
         for entity in self.entities:
             entity.update()
+
+            if not entity.alive:
+                self.remove_entity_from_colony(entity.entity_id)
+                del self.entities[entity]
 
     def next_entity_id(self) -> int:
         self.last_entity_id += 1

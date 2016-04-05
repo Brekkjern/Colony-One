@@ -12,8 +12,15 @@ class Structure(Entity):
         self.task = task
 
     def update(self):
+        super(Structure, self).update()
+        if self.health > 0:
+            self.alive = False
+
         self.work()
         self.check_progress()
+
+    def tick(self):
+        super(Structure, self).tick()
 
     def damage(self, dmg):
         self.health -= dmg
