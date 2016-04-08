@@ -12,7 +12,11 @@ class EntityMaster(object):
             member_list = []
 
         self.last_entity_id = last_entity_id
+
+        # Entity list contains a list of entity objects
         self.entities = entities
+
+        # Member list contains a list of lists of the structure [colony, entity]
         self.member_list = member_list
 
     def tick(self):
@@ -35,6 +39,8 @@ class EntityMaster(object):
         for entity in self.entities:
             if entity.entity_id == entity_id:
                 return entity
+    def get_colony_entities(self, colony_id: int) -> list:
+        return list(filter(lambda sub_list: sub_list[0] == colony_id , self.member_list))
 
     def add_entity_to_colony(self, entity: int, colony: int) -> bool:
         if self.get_entity_colony(entity):
