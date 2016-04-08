@@ -47,7 +47,8 @@ class Colonist(Entity):
         # Reduce hunger.
         self.hunger -= 1
 
-        self.alive = self.age < self.life_expectancy()
+        if self.age < self.life_expectancy():
+            self.alive = False
 
         if not self.alive:
             print("DEBUG: Colonist {} died on tick {}.".format(self.entity_id, conf.tick))
