@@ -40,7 +40,7 @@ class EntityMaster(object):
             if entity.entity_id == entity_id:
                 return entity
     def get_colony_entities(self, colony_id: int) -> list:
-        return list(filter(lambda sub_list: sub_list[0] == colony_id , self.member_list))
+        return [entry[1] for entry in self.member_list if entry[0] == colony_id]
 
     def add_entity_to_colony(self, entity: int, colony: int) -> bool:
         if self.get_entity_colony(entity):
