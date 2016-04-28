@@ -4,10 +4,10 @@ import random
 class Trait(object):
     """Object model for colonist traits."""
 
-    def __init__(self, name=None, dominant=False, inheritance_chance=0.1, abilities=None, skills=None, active= True):
+    def __init__(self, name=None, dominant=False, inheritance_chance=0.1, attributes=None, skills=None, active= True):
 
-        if not abilities:
-            self.abilities = {}
+        if not attributes:
+            self.attributes = {}
 
         if not skills:
             self.skills = {}
