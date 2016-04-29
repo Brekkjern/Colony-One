@@ -24,7 +24,7 @@ class EntityMaster(object):
             entity.tick()
 
     def update(self):
-        for entity in self.entities:
+        for entity in sorted(self.entities, reversed=True):
             entity.update()
 
             if not entity.alive:
