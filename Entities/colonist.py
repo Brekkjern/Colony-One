@@ -7,11 +7,10 @@ from Entities.entity import Entity
 class Colonist(Entity):
     """Object model for colonists."""
 
-    # Table to hold all references to entities. Allows for fast listing of all entities.
+    # Table to hold all references to colonist entities. Allows for fast listing of all entities.
     colonists = []
 
-    def __init__(self, entity_id, morale = 100, health = 100, age = 0, education = None, hunger = 0):
-
+    def __init__(self, entity_id, morale=100, health=100, age=0, education=None, hunger=0):
         super(Colonist, self).__init__(entity_id)
         self.__class__.colonists.append(weakref.proxy(self))
 
@@ -97,12 +96,3 @@ class Colonist(Entity):
         morale = conf.game_settings['morale'] * self.morale
         attributes = self.attributes[building.task.attributes[0]] * (self.attributes[building.task.attributes[1]] / 2)
         return morale * self.health * attributes
-
-    def is_worker(self):
-        return self.age >= (16 * conf.game_settings['ticks_per_year'])
-
-    def is_engineer(self):
-        return self.education['engineering'] == 100
-
-    def is_scientist(self):
-        return self.education['science'] == 100
