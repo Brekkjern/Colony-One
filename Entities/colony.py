@@ -9,7 +9,7 @@ class Colony(Entity):
     """Object model for Colony objects"""
 
     # Table to hold all references to colony entities. Allows for fast listing of all entities.
-    colonies = []
+    structures = []
 
     def __init__(self, entity_id, game_settings, colonists=None, buildings=None, agridomes=None,
                  generators = None, stockpile = None):
@@ -55,7 +55,7 @@ class Colony(Entity):
     def add_to_stockpile(self, item):
         self.stockpile.append(item)
 
-    def request_power(self, power):
+    def request_power(self, power: float) -> bool:
         # Drain a select amount of power from the colony if it's available.
         if self.power >= power:
             self.power -= power
@@ -63,12 +63,12 @@ class Colony(Entity):
 
         return False
 
-    def new_colonist(self):
+    def new_colonist(self) -> Colonist:
         colonist = Colonist(self.game_settings)
         self.colonists.append(colonist)
         return colonist
 
-    def food_count(self):
+    def food_count(self) -> int:
         food = 0
 
         for agridome in self.agridomes:
@@ -76,7 +76,7 @@ class Colony(Entity):
 
         return food
 
-    def new_building(self):
+    def new_building(self) -> Structure:
         building = Structure()
         self.buildings.append(building)
 

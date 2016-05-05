@@ -1,5 +1,6 @@
 from Entities.structure import Structure
 from Entities.colonist import Colonist
+from Entities.entity import Entity
 
 
 class EntityMaster(object):
@@ -24,7 +25,7 @@ class EntityMaster(object):
             entity.tick()
 
     def update(self):
-        for entity in sorted(self.entities, reversed=True):
+        for entity in sorted(self.entities, reverse=True):
             entity.update()
 
             if not entity.alive:
@@ -35,7 +36,7 @@ class EntityMaster(object):
         self.last_entity_id += 1
         return self.last_entity_id
 
-    def get_entity(self, entity_id: int) -> object:
+    def get_entity(self, entity_id: int) -> Entity:
         for entity in self.entities:
             if entity.entity_id == entity_id:
                 return entity
@@ -64,7 +65,7 @@ class EntityMaster(object):
     def add_entity(self, entity: object) -> bool:
         return self.entities.append(entity)
 
-    def new_colonist(self, colony: int) -> object:
+    def new_colonist(self, colony: int) -> Colonist:
         colonist = Colonist(self.next_entity_id())
         self.add_entity(colonist)
         self.add_entity_to_colony(colonist.entity_id, colony)
