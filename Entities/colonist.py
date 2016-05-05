@@ -1,13 +1,19 @@
 import math
 import conf
+import weakref
 from Entities.entity import Entity
 
 
 class Colonist(Entity):
     """Object model for colonists."""
 
+    # Table to hold all references to entities. Allows for fast listing of all entities.
+    colonists = []
+
     def __init__(self, entity_id, morale = 100, health = 100, age = 0, education = None, hunger = 0):
+
         super(Colonist, self).__init__(entity_id)
+        self.__class__.colonists.append(weakref.proxy(self))
 
         if not education:
             education = {'engineering': 0, 'science': 0}
