@@ -58,30 +58,31 @@ class Colonist(Entity):
         if not self.alive:
             print("DEBUG: Colonist {} died on tick {}.".format(self.entity_id, conf.tick))
 
-    def apply_trait_effect(self, trait):
+    def apply_trait_effect(self, trait: object) -> bool:
         if trait.active:
             for attribute, modifier in trait.attributes.items():
                 self.attributes[attribute] += modifier
 
             for skill, modifier in trait.skills.items():
                 self.skills[skill] += modifier
+            return True
+        return False
 
-    def assign_trait(self, new_trait):
+    def assign_trait(self, new_trait: object) -> bool:
         if new_trait not in self.traits:
             self.traits.append(new_trait)
             self.apply_trait_effect(new_trait)
             return True
-        else:
-            return False
+        return False
 
-    def change_health(self, target, divider):
+    def change_health(self, target: float, divider: float) -> float:
         return (target - self.health) / divider
 
-    def life_expectancy(self):
+    def life_expectancy(self) -> float:
         # Years / (1 + 10^(-0.1 * health))
         return 80 * conf.game_settings['ticks_per_year'] / (1 + math.exp(-0.1 * self.health))
 
-    def fertility(self):
+    def fertility(self) -> float:
         # This is a standard parabolic function expressed as y = a (x - h)^2 + (bx) + k
         # "a" determines the slope of the graph
         # "h" determines the point where the graph turns
