@@ -8,14 +8,22 @@ class Structure(Entity):
     # Table to hold all references to structure entities. Allows for fast listing of all entities.
     structures = []
 
-    def __init__(self, entity_id, powered=None, health=100, task=None):
+    def __init__(self, entity_id, powered=None, health=100, task=None, input_slot=None, output_slot=None):
         super(Structure, self).__init__(entity_id)
         self.__class__.structures.append(weakref.proxy(self))
+
+        if not input_slot:
+            input_slot = []
+
+        if not output_slot:
+            output_slot = []
 
         self.destroyed = False
         self.health = health
         self.powered = powered
         self.task = task
+        self.input_slot = input_slot
+        self.output_slot = output_slot
 
     def update(self):
         super(Structure, self).update()
@@ -23,7 +31,7 @@ class Structure(Entity):
             self.alive = False
 
         self.work()
-        self.check_progress()
+        self.output_slot.append(self.check_progress())
 
     def tick(self):
         super(Structure, self).tick()
