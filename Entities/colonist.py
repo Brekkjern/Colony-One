@@ -2,7 +2,8 @@ import math
 import conf
 import weakref
 from Entities.entity import Entity
-
+from Entities.trait import Trait
+from Entities.structure import Structure
 
 class Colonist(Entity):
     """Object model for colonists."""
@@ -58,7 +59,7 @@ class Colonist(Entity):
         if not self.alive:
             print("DEBUG: Colonist {} died on tick {}.".format(self.entity_id, conf.tick))
 
-    def apply_trait_effect(self, trait: object) -> bool:
+    def apply_trait_effect(self, trait: Trait) -> bool:
         if trait.active:
             for attribute, modifier in trait.attributes.items():
                 self.attributes[attribute] += modifier
@@ -68,7 +69,7 @@ class Colonist(Entity):
             return True
         return False
 
-    def assign_trait(self, new_trait: object) -> bool:
+    def assign_trait(self, new_trait: Trait) -> bool:
         if new_trait not in self.traits:
             self.traits.append(new_trait)
             self.apply_trait_effect(new_trait)
@@ -93,7 +94,7 @@ class Colonist(Entity):
         age = self.age / conf.game_settings['ticks_per_year']
         return (0.25 * (age - 35) ** 2) + (-0.3 * age) + 15
 
-    def do_work(self, building: object) -> float:
+    def do_work(self, building: Structure) -> float:
         morale = conf.game_settings['morale'] * self.morale
         attributes = self.attributes[building.task.attributes[0]] * (self.attributes[building.task.attributes[1]] / 2)
         return morale * self.health * attributes
