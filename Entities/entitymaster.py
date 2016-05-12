@@ -7,7 +7,7 @@ class EntityMaster(object):
     def __init__(self, last_entity_id = 0, entities = None, member_list = None):
 
         if not entities:
-            entities = []
+            entities = {}
 
         if not member_list:
             member_list = []
@@ -25,21 +25,19 @@ class EntityMaster(object):
             entity.tick()
 
     def update(self):
-        for entity in sorted(self.entities, reverse=True):
+        for entity_id, entity in sorted(self.entities, reverse=True):
             entity.update()
 
             if not entity.alive:
                 self.remove_entity_from_colony(entity.entity_id)
-                del self.entities[entity]
+                del self.entities[entity_id]
 
-    def next_entity_id(self) -> int:
+    def get_new_entity_id(self) -> int:
         self.last_entity_id += 1
         return self.last_entity_id
 
     def get_entity(self, entity_id: int) -> Entity:
-        for entity in self.entities:
-            if entity.entity_id == entity_id:
-                return entity
+        return self.entities[entity_id]
 
     def get_colony_entity_list(self, colony_id: int) -> list:
         return [entry[1] for entry in self.member_list if entry[0] == colony_id]
@@ -62,11 +60,11 @@ class EntityMaster(object):
                 if entity == entity_id:
                     return colony
 
-    def add_entity(self, entity: object) -> bool:
-        return self.entities.append(entity)
+    def add_entity(self, entity: Entity):
+        self.entities[str(entity.entity_id)] = entity
 
     def new_colonist(self, colony: int) -> Colonist:
-        colonist = Colonist(self.next_entity_id())
+        colonist = Colonist(self.get_new_entity_id())
         self.add_entity(colonist)
         self.add_entity_to_colony(colonist.entity_id, colony)
         return colonist
