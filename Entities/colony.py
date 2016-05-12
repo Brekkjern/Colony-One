@@ -9,12 +9,12 @@ class Colony(Entity):
     """Object model for Colony objects"""
 
     # Table to hold all references to colony entities. Allows for fast listing of all entities.
-    structures = []
+    colonies = []
 
     def __init__(self, entity_id, game_settings, colonists=None, buildings=None, agridomes=None,
                  generators = None, stockpile = None):
         super(Colony, self).__init__(entity_id)
-        self.__class__.structures.append(weakref.proxy(self))
+        self.__class__.colonies.append(weakref.proxy(self))
 
         if not colonists:
             colonists = []

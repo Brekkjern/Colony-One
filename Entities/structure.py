@@ -30,7 +30,6 @@ class Structure(Entity):
         if self.health > 0:
             self.alive = False
 
-        self.work()
         self.output_slot.append(self.check_progress())
 
     def tick(self):
