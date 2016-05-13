@@ -40,28 +40,28 @@ class EntityMaster(object):
         return self.entities[entity_id]
 
     def get_colony_entity_list(self, colony_id: int) -> list:
-        return [entry[1] for entry in self.member_list if entry[0] == colony_id]
+        members = []
 
-    def add_entity_to_colony(self, entity: int, colony: int) -> bool:
+        for colonist, colony in self.member_list:
+            if colony == colony_id:
+                members.append(colonist)
+
+        return members
+
+    def add_entity_to_colony(self, entity: int, colony: int):
         if self.get_entity_colony(entity):
             self.remove_entity_from_colony(entity)
 
-        return self.member_list.append([colony, entity])
+        self.member_list[entity] = colony
 
     def remove_entity_from_colony(self, entity_id: int) -> bool:
-        for entry in self.member_list:
-            for colony, entity in entry:
-                if entity == entity_id:
-                    return self.member_list.remove(entry)
+        del self.member_list[entity_id]
 
     def get_entity_colony(self, entity_id: int) -> int:
-        for entry in self.member_list:
-            for colony, entity in entry:
-                if entity == entity_id:
-                    return colony
+        return self.member_list[entity_id]
 
     def add_entity(self, entity: Entity):
-        self.entities[str(entity.entity_id)] = entity
+        self.entities[entity.entity_id] = entity
 
     def new_colonist(self, colony: int) -> Colonist:
         colonist = Colonist(self.get_new_entity_id())
