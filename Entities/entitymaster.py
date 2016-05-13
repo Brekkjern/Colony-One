@@ -10,7 +10,7 @@ class EntityMaster(object):
             entities = {}
 
         if not member_list:
-            member_list = []
+            member_list = {}
 
         self.last_entity_id = last_entity_id
 
@@ -48,11 +48,11 @@ class EntityMaster(object):
 
         return members
 
-    def add_entity_to_colony(self, entity: int, colony: int):
-        if self.get_entity_colony(entity):
-            self.remove_entity_from_colony(entity)
+    def add_entity_to_colony(self, entity_id: int, colony: int):
+        if self.get_entity_colony(entity_id):
+            self.remove_entity_from_colony(entity_id)
 
-        self.member_list[entity] = colony
+        self.member_list[entity_id] = colony
 
     def remove_entity_from_colony(self, entity_id: int) -> bool:
         del self.member_list[entity_id]
@@ -63,8 +63,8 @@ class EntityMaster(object):
     def add_entity(self, entity: Entity):
         self.entities[entity.entity_id] = entity
 
-    def new_colonist(self, colony: int) -> Colonist:
+    def new_colonist(self, colony_id: int) -> Colonist:
         colonist = Colonist(self.get_new_entity_id())
         self.add_entity(colonist)
-        self.add_entity_to_colony(colonist.entity_id, colony)
+        self.add_entity_to_colony(colonist.entity_id, colony_id)
         return colonist
