@@ -1,9 +1,20 @@
 import math
 import conf
 import weakref
+from collections import Counter
 from Entities.entity import Entity
 from Entities.trait import Trait
+from Entities.task import Task
+from Entities.skill import Skill
 from Entities.structure import Structure
+
+# Default value for attributes
+default_attribute_value = 10
+base_attributes = [ "wisdom",
+                    "logic",
+                    "focus"
+                    "endurance",
+                    "dexterity" ]
 
 class Colonist(Entity):
     """Object model for colonists."""
@@ -25,19 +36,11 @@ class Colonist(Entity):
         self.hunger = hunger
 
         # Stats
-        self.attributes = {
-            'wisdom': 10,
-            'logic': 10,
-            'focus': 10,
-            'endurance': 10,
-            'dexterity': 10
-        }
+        self.attributes = {}
 
-        self.skills = {
+        self.skills = {}
 
-        }
-
-        # Traits
+        # Applied traits
         self.traits = []
 
     def update(self):
@@ -59,22 +62,42 @@ class Colonist(Entity):
         if not self.alive:
             print("DEBUG: Colonist {} died on tick {}.".format(self.entity_id, conf.tick))
 
-    def apply_trait_effect(self, trait: Trait) -> bool:
-        if trait.active:
-            for attribute, modifier in trait.attributes.items():
-                self.attributes[attribute] += modifier
+    # def get_attribute_value(self, attribute: str) -> float:
+    #     total_modifier = 0
+    #
+    #     for trait in self.traits:
+    #         total_modifier += trait.get_attribute_modifier(attribute)
+    #
+    #     return default_attribute_value + total_modifier
 
-            for skill, modifier in trait.skills.items():
-                self.skills[skill] += modifier
-            return True
-        return False
+    def cache_trait_values(self):
+        attribute_values = Counter()
+
+        for trait in self.traits:
+            for attribute in base_attributes:
+                attribute_values += trait.attributes[attribute]
+
+        self.attributes = attribute_values
+
+    def get_skill(self, skill: str) -> Skill:
+        return self.skills[skill]
 
     def assign_trait(self, new_trait: Trait) -> bool:
-        if new_trait not in self.traits:
+        if new_trait in self.traits:
+            return False
+        else:
             self.traits.append(new_trait)
-            self.apply_trait_effect(new_trait)
+            self.cache_trait_values()
             return True
-        return False
+
+    def get_morale(self) -> float:
+        return conf.game_settings['morale'] * self.morale
+
+    def do_work(self, task: Task) -> float:
+        skill = self.get_skill(task.skill)
+        attributes = self.attributes[skill.primary]
+        attributes *= (self.attributes[skill.primary] / 2)
+        return self.get_morale() * self.health * attributes
 
     def change_health(self, target: float, divider: float) -> float:
         return (target - self.health) / divider
@@ -93,8 +116,3 @@ class Colonist(Entity):
 
         age = self.age / conf.game_settings['ticks_per_year']
         return (0.25 * (age - 35) ** 2) + (-0.3 * age) + 15
-
-    def do_work(self, building: Structure) -> float:
-        morale = conf.game_settings['morale'] * self.morale
-        attributes = self.attributes[building.task.attributes[0]] * (self.attributes[building.task.attributes[1]] / 2)
-        return morale * self.health * attributes

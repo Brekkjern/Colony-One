@@ -14,11 +14,13 @@ class Trait(object):
         self.__class__.traits.append(weakref.proxy(self))
 
         if not attributes:
-            self.attributes = {}
+            attributes = {}
 
         if not skills:
-            self.skills = {}
+            skills = {}
 
+        self.attributes = attributes
+        self.skills = skills
         self.name = name
         self.dominant = dominant
         self.chance = inheritance_chance
@@ -27,5 +29,8 @@ class Trait(object):
     def inherit(self) -> bool:
         return random.random() < self.chance
 
-    def __eq__(self, other: object) -> bool:
-        return self.name == other.name
+    def get_attribute_modifier(self, attribute: str) -> float:
+        if self.active:
+            return self.attributes[attribute]
+        else:
+            return 0

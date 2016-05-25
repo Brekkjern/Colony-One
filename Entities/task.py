@@ -1,19 +1,22 @@
 class Task(object):
     """Object model for tasks."""
 
-    def __init_(self, primary_attribute, secondary_attribute, input = None, output = None, progress = 0, goal = 1):
+    def __init_(self, skill: str, input = None, output: object = None, progress: float = 0, goal: float = 1):
+        self.skill = skill
         self.input = input
         self.output = output
-        self.attributes = [primary_attribute, secondary_attribute]
         self.progress = progress
         self.goal = goal
 
-    def perform_task(self, amount: float) -> float:
-        self.progress += amount
-        return self.progress
+    def progress_task(self, amount: float) -> bool:
+        if not self.is_completed():
+            self.progress += amount
+            return True
+        else:
+            return False
 
-    def check_progress(self) -> bool:
+    def is_completed(self) -> bool:
         return self.progress >= self.goal
 
-    def return_output(self) -> object:
+    def return_task_output(self) -> object:
         return self.output
