@@ -1,7 +1,6 @@
 import math
 import conf
 import weakref
-from collections import Counter
 from Entities.entity import Entity
 from Entities.trait import Trait
 from Entities.task import Task
@@ -71,7 +70,7 @@ class Colonist(Entity):
     #     return default_attribute_value + total_modifier
 
     def cache_trait_values(self):
-        attribute_values = Counter()
+        attribute_values = Attribute()
 
         for trait in self.traits:
             for attribute in base_attributes:
@@ -116,3 +115,8 @@ class Colonist(Entity):
 
         age = self.age / conf.game_settings['ticks_per_year']
         return (0.25 * (age - 35) ** 2) + (-0.3 * age) + 15
+
+class Attribute(dict):
+    """Extends the dict class to return the default attribute value if nothing is set for the attribute."""
+    def __missing__(self, key):
+        return default_attribute_value
