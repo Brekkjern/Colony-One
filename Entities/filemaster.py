@@ -1,11 +1,14 @@
-class Loader(object):
+class FileMaster(object):
     def __init__(self):
         pass
 
-    def load_file(self):
-        pass
+    def _load_file(self, file) -> str:
+        with open(file) as data:
+            read_data = data.read()
 
-    def interpret_python(self):
+        return read_data
+
+    def interpret_json(self):
         pass
 
     def load_traits(self):
