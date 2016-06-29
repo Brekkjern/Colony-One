@@ -1,8 +1,8 @@
-from Entities.structure import Structure
+import weakref
+
 from Entities.colonist import Colonist
 from Entities.entity import Entity
-import weakref
-import conf
+from Entities.structure import Structure
 
 
 class Colony(Entity):
@@ -12,7 +12,7 @@ class Colony(Entity):
     colonies = []
 
     def __init__(self, entity_id, game_settings, colonists=None, buildings=None, agridomes=None,
-                 generators = None, stockpile = None):
+                 generators=None, stockpile=None):
         super(Colony, self).__init__(entity_id)
         self.__class__.colonies.append(weakref.proxy(self))
 

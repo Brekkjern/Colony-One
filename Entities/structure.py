@@ -1,5 +1,6 @@
-from Entities.entity import Entity
 import weakref
+
+from Entities.entity import Entity
 
 
 class Structure(Entity):

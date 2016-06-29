@@ -1,10 +1,9 @@
-from Entities.structure import Structure
 from Entities.colonist import Colonist
 from Entities.entity import Entity
 
 
 class EntityMaster(object):
-    def __init__(self, last_entity_id = 0, entities = None, member_list = None):
+    def __init__(self, last_entity_id=0, entities=None, member_list=None):
 
         if not entities:
             entities = {}
@@ -21,7 +20,7 @@ class EntityMaster(object):
         self.member_list = member_list
 
     def tick(self):
-        for entity in sorted(self.entities, reverse = True):
+        for entity in sorted(self.entities, reverse=True):
             entity.tick()
 
     def update(self):

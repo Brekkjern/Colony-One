@@ -1,7 +1,7 @@
 import weakref
 
-class Entity(object):
 
+class Entity(object):
     # Table to hold all references of entities. Allows for fast listing of all entities.
     entities = []
 

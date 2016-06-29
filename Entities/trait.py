@@ -8,7 +8,7 @@ class Trait(object):
     # Table to hold all references to traits. Allows for fast listing of all entities.
     traits = []
 
-    def __init__(self, name=None, dominant=False, inheritance_chance=0.1, attributes=None, skills=None, active= True):
+    def __init__(self, name=None, dominant=False, inheritance_chance=0.1, attributes=None, skills=None, active=True):
 
         # Appends the new trait to the list of traits
         self.__class__.traits.append(weakref.proxy(self))

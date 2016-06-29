@@ -1,7 +1,7 @@
 class Task(object):
     """Object model for tasks."""
 
-    def __init_(self, skill: str, input = None, output: object = None, progress: float = 0, goal: float = 1):
+    def __init_(self, skill: str, input=None, output: object = None, progress: float = 0, goal: float = 1):
         self.skill = skill
         self.input = input
         self.output = output

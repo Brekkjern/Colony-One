@@ -1,19 +1,20 @@
 import math
-import conf
 import weakref
+
+import conf
 from Entities.entity import Entity
-from Entities.trait import Trait
-from Entities.task import Task
 from Entities.skill import Skill
-from Entities.structure import Structure
+from Entities.task import Task
+from Entities.trait import Trait
 
 # Default value for attributes
 default_attribute_value = 10
-base_attributes = [ "wisdom",
-                    "logic",
-                    "focus"
-                    "endurance",
-                    "dexterity" ]
+base_attributes = ["wisdom",
+                   "logic",
+                   "focus"
+                   "endurance",
+                   "dexterity"]
+
 
 class Colonist(Entity):
     """Object model for colonists."""
@@ -116,7 +117,9 @@ class Colonist(Entity):
         age = self.age / conf.game_settings['ticks_per_year']
         return (0.25 * (age - 35) ** 2) + (-0.3 * age) + 15
 
+
 class Attribute(dict):
     """Extends the dict class to return the default attribute value if nothing is set for the attribute."""
+
     def __missing__(self, key):
         return default_attribute_value

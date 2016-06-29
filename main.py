@@ -1,5 +1,5 @@
-from Entities.colony import Colony
 import conf
+from Entities.colony import Colony
 
 print("DEBUG: Create Colony.")
 test_colony = Colony(conf.game_settings)
@@ -16,4 +16,3 @@ while test_colony.colonists:
     conf.tick += 1
     print(conf.tick)
     test_colony.update()
-
