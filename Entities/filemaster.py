@@ -1,8 +1,11 @@
+import json
+
+
 class FileMaster(object):
     def __init__(self):
         pass
 
-    def _load_file(self, file) -> str:
+    def _load_file(self, file: str) -> str:
         with open(file) as data:
             read_data = data.read()
 
