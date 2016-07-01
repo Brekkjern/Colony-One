@@ -11,8 +11,8 @@ class FileMaster(object):
 
         return read_data
 
-    def interpret_json(self):
-        pass
+    def interpret_json_from_string(self, string: str) -> object:
+        return json.loads(string)
 
     def load_traits(self):
         pass
