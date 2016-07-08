@@ -5,6 +5,7 @@ Point = collections.namedtuple("Point", ["x", "y"])
 Axial = collections.namedtuple("Axial", ["q", "r", "s"])
 Cube = collections.namedtuple("Cube", ["x", "y", "z"])
 
+
 class Hex(object):
 
     directions = [
@@ -30,8 +31,8 @@ class Hex(object):
         return Point(self.center.q + self.size + math.cos(angle_rad), self.center.r + self.size + math.sin(angle_rad))
 
     def get_hex_neighbour(self, direction: int) -> Point:
-        dir = self.directions[direction]
-        return Point(self.center.q + dir.q, self.center.r + dir.r)
+        dir_object = self.directions[direction]
+        return Point(self.center.q + dir_object.q, self.center.r + dir_object.r)
 
 
 class Map(object):
@@ -50,11 +51,11 @@ class Map(object):
     def get_coord(self, x: int, y: int) -> object:
         return self.table[self.__hash_coord(x, y)]
 
-    def _convert_to_cube(self, q: int, r: int) -> tuple:
+    def _convert_to_cube(self, q: int, r: int) -> Cube:
         x = q
         z = r
         y = -x - z
-        return x, y, z
+        return Cube(x, y, z)
 
     def _cube_distance(self, a: Cube, b: Cube) -> int:
         return (abs(a.x - b.x) + abs(a.y - b.y) + abs(a.z - b.z)) / 2
