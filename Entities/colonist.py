@@ -9,11 +9,8 @@ from Entities.trait import Trait
 
 # Default value for attributes
 default_attribute_value = 10
-base_attributes = ["wisdom",
-                   "logic",
-                   "focus"
-                   "endurance",
-                   "dexterity"]
+base_attributes = ["wisdom", "logic", "focus"
+                                      "endurance", "dexterity"]
 
 
 class Colonist(Entity):
@@ -22,7 +19,8 @@ class Colonist(Entity):
     # Table to hold all references to colonist entities. Allows for fast listing of all entities.
     colonists = []
 
-    def __init__(self, entity_id, morale=100, health=100, age=0, education=None, hunger=0):
+    def __init__(self, entity_id: int, morale: float = 100, health: float = 100, creation_tick: int = conf.tick, education = None,
+                 hunger: float = 0):
         super(Colonist, self).__init__(entity_id)
         self.__class__.colonists.append(weakref.proxy(self))
 
@@ -32,7 +30,7 @@ class Colonist(Entity):
         self.education = education
         self.morale = morale
         self.health = health
-        self.age = age
+        self._creation_tick = creation_tick
         self.hunger = hunger
 
         # Stats
@@ -50,13 +48,11 @@ class Colonist(Entity):
 
     def tick(self):
         super(Colonist, self).tick()
-        # Add a day to the colonist age.
-        self.age += 1
 
         # Reduce hunger.
         self.hunger -= 1
 
-        if self.age < self.life_expectancy():
+        if self.get_age() < self.life_expectancy():
             self.alive = False
 
         if not self.alive:
@@ -69,6 +65,9 @@ class Colonist(Entity):
     #         total_modifier += trait.get_attribute_modifier(attribute)
     #
     #     return default_attribute_value + total_modifier
+
+    def get_age(self) -> int:
+        return conf.tick - self._creation_tick
 
     def cache_trait_values(self):
         attribute_values = Attribute()
@@ -114,7 +113,7 @@ class Colonist(Entity):
         # "b" moves the bottom point of the parabola in a reverse parabolic arc
         # y = 0.25(x-35)^2+(-0.3x)+20
 
-        age = self.age / conf.game_settings['ticks_per_year']
+        age = self._creation_tick / conf.game_settings['ticks_per_year']
         return (0.25 * (age - 35) ** 2) + (-0.3 * age) + 15
 
 
