@@ -1,16 +1,17 @@
 import weakref
 
-from Entities.entity import Entity
+from Entities.worldentity import WorldEntity
+from Entities.hexmap import Axial
 
 
-class Structure(Entity):
+class Structure(WorldEntity):
     """Object model for structures."""
 
     # Table to hold all references to structure entities. Allows for fast listing of all entities.
     structures = []
 
-    def __init__(self, entity_id, powered=None, health=100, task=None, input_slot=None, output_slot=None):
-        super(Structure, self).__init__(entity_id)
+    def __init__(self, entity_id, location: Axial, powered=None, health=100, task=None, input_slot=None, output_slot=None):
+        super(Structure, self).__init__(entity_id, location)
         self.__class__.structures.append(weakref.proxy(self))
 
         if not input_slot:
