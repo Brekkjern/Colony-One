@@ -19,7 +19,7 @@ class Colonist(Entity):
     # Table to hold all references to colonist entities. Allows for fast listing of all entities.
     colonists = []
 
-    def __init__(self, entity_id: int, morale: float = 100, health: float = 100, creation_tick: int = conf.tick, education = None,
+    def __init__(self, entity_id: int, morale: float = 100, health: float = 100, creation_tick: int = None, education = None,
                  hunger: float = 0):
         super(Colonist, self).__init__(entity_id)
         self.__class__.colonists.append(weakref.proxy(self))
@@ -30,7 +30,7 @@ class Colonist(Entity):
         self.education = education
         self.morale = morale
         self.health = health
-        self._creation_tick = creation_tick
+        self._creation_tick = conf.tick if creation_tick is None else creation_tick
         self.hunger = hunger
 
         # Stats
