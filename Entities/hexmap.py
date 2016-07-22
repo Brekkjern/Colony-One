@@ -2,37 +2,129 @@ import math
 import collections
 
 Point = collections.namedtuple("Point", ["x", "y"])
-Axial = collections.namedtuple("Axial", ["q", "r", "s"])
-Cube = collections.namedtuple("Cube", ["x", "y", "z"])
+
+# Statics for use in calculating between hex and pixel values
+Orientation = collections.namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
+Layout = collections.namedtuple("Layout", ["orientation", "size", "origin"])
+layout_pointy = Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0,
+                            math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5)
+
+class Axial(object):
+    def __init__(self, q: float, r: float, s: float = None):
+
+        # Calculate s if there are only 2 arguments given.
+        if not s:
+            s = -q - r
+
+        # Round values to get coordinates as integers
+        rq = round(q)
+        rr = round(r)
+        rs = round(s)
+
+        x_diff = abs(rq - q)
+        y_diff = abs(rr - r)
+        z_diff = abs(rs - s)
+
+        if x_diff > y_diff and x_diff > z_diff:
+            rq = -rr - rs
+        elif y_diff > z_diff:
+            rr = -rq - rs
+        else:
+            rs = -rq - rr
+
+        # Make sure coordinates sum to 0
+        assert (rq + rr + rs == 0)
+
+        self.q = rq
+        self.r = rr
+        self.s = rs
+
+    def __eq__(self, other) -> bool:
+        return self.q == other.q and self.r == other.r and self.s == other.s
+
+    def __add__(self, other):
+        return Axial(self.q + other.q, self.r + other.r, self.s + other.s)
+
+    def __sub__(self, other):
+        return Axial(self.q - other.q, self.r - other.r, self.s - other.s)
+
+    def __mul__(self, other):
+        return Axial(self.q * other, self.r * other, self.s * other)
+
+    @staticmethod
+    def vector_length(vector) -> int:
+        return (abs(vector.q) + abs(vector.r) + abs(vector.s)) // 2
+
+    def distance(self, other) -> int:
+        return self.vector_length(self - other)
+
+    def get_neighbour_coordinate(self, direction: int):
+        direction %= 6
+        dir_object = directions[direction]
+        return Axial(self.q + dir_object.q, self.r + dir_object.r)
+
+    @staticmethod
+    def __lerp(a: float, b: float, step: float) -> int:
+        return a + (b - a) * step
+
+    def __cube_lerp(self, other, step):
+        return Axial(self.__lerp(self.q, other.q, step),
+                     self.__lerp(self.r, other.r, step),
+                     self.__lerp(self.s, other.s, step))
+
+    def drawline(self, other) -> list:
+        N = self.distance(other)
+        self_nudge = Axial(self.q + 0.000001, self.r + 0.000001, self.s - 0.000002)
+        other_nudge = Axial(other.q + 0.000001, other.r + 0.000001, other.s - 0.000002)
+        step = 1.0 / max(N, 1)
+
+        results = []
+        for i in range(0, N + 1):
+            results.append(self_nudge.__cube_lerp(other_nudge, step * i))
+
+        return results
+
+    @staticmethod
+    def __unpack_layout(layout) -> tuple:
+        return (layout.orientation, layout.size, layout.origin)
+
+    def hex_to_pixel(self, layout: Layout) -> Point:
+        orientation, size, origin = self.__unpack_layout(layout)
+        x = (orientation.f0 * self.q + orientation.f1 * self.r) * size.x
+        y = (orientation.f2 * self.q + orientation.f3 * self.r) * size.y
+        return Point(x + origin.x, y + origin.y)
+
+    def hex_range(self, distance: int) -> list:
+        results = []
+        for dx in range(-distance, distance + 1):
+            min_range = max(-distance, -dx - distance)
+            max_range = min(distance, (-dx+ distance))
+            for dy in range(min_range, max_range + 1):
+                dz = -dx - dy
+                results.append(self + Axial(dx, dy, dz))
+
+        return results
+
+# Helper table to find axial neighbours
+directions = [Axial(+1, 0), Axial(+1, -1), Axial(0, -1), Axial(-1, 0), Axial(-1, +1), Axial(0, +1)]
 
 
-class Hex(object):
+class Hex(Axial):
+    def __init__(self, q: float, r: float, s: float = None):
+        super(Hex, self).__init__(q, r, s)
 
-    directions = [
-        Axial(+1, 0), Axial(+1, -1), Axial(0, -1),
-        Axial(-1, 0), Axial(-1, +1), Axial(0, +1)
-    ]
+    def hex_corner_offset(self, layout: Layout, corner: int) -> Point:
+        angle = 2.0 * math.pi * (layout.orientation.start_angle - corner) / 6
+        return Point(layout.size.x * math.cos(angle), layout.size.y * math.sin(angle))
 
-    def __init__(self, center: Axial, size: float):
-        self.center = center
-        self.size = size
+    def hex_corner_list(self, layout: Layout) -> list:
+        corners = []
+        center = self.hex_to_pixel(layout)
+        for i in range(0, 5):
+            offset = self.hex_corner_offset(layout, i)
+            corners.append(Point(center.x + offset.x, center.y + offset.y))
 
-    def get_hex_corner(self, corner_number: int) -> Point:
-        """Returns point of hex corner
-
-        Returns the point of the corner counted from the rightmost corner of the hex.
-
-        :param corner_number: corner to return
-        :return: Point object of corner
-        """
-        angle_deg = 60 * corner_number + 30
-        angle_rad = math.pi / 180 * angle_deg
-
-        return Point(self.center.q + self.size + math.cos(angle_rad), self.center.r + self.size + math.sin(angle_rad))
-
-    def get_hex_neighbour(self, direction: int) -> Point:
-        dir_object = self.directions[direction]
-        return Point(self.center.q + dir_object.q, self.center.r + dir_object.r)
+        return corners
 
 
 class Map(object):
@@ -42,70 +134,26 @@ class Map(object):
 
         self.table = table
 
-    def __hash_coord(self, x: int, y: int) -> int:
-        return hash((x, y))
+    def __hash_coord(self, item: Axial) -> int:
+        return hash((item.q, item.r))
 
-    def add_coord(self, x: int, y: int, item: object):
-        self.table[self.__hash_coord(x, y)] = item
-
-    def get_coord(self, x: int, y: int) -> object:
-        return self.table[self.__hash_coord(x, y)]
-
-    def _convert_to_cube(self, q: int, r: int) -> Cube:
-        x = q
-        z = r
-        y = -x - z
-        return Cube(x, y, z)
-
-    def _cube_distance(self, a: Cube, b: Cube) -> int:
-        return (abs(a.x - b.x) + abs(a.y - b.y) + abs(a.z - b.z)) / 2
-
-    def get_distance(self, a: Axial, b: Axial) -> int:
-        a_cube = self._convert_to_cube(a.q, a.r)
-        b_cube = self._convert_to_cube(b.q, b.r)
-        return self._cube_distance(a_cube, b_cube)
-
-    def add_cube(self, a: Cube, b: Cube) -> Cube:
-        return Cube(a.x + b.x, a.y + b.y, a.z + b.z)
-
-    def cube_round(self, cube: Cube) -> Cube:
-        rx = round(cube.x)
-        ry = round(cube.y)
-        rz = round(cube.z)
-
-        x_diff = abs(rx - cube.x)
-        y_diff = abs(ry - cube.y)
-        z_diff = abs(rz - cube.z)
-
-        if x_diff > y_diff and x_diff > z_diff:
-            rx = -ry - rz
-        elif y_diff > z_diff:
-            ry = -rx - rz
+    def add_hex(self, item: Hex) -> bool:
+        if not self.table[self.__hash_coord(item)]:
+            self.table[self.__hash_coord(item)] = item
+            return True
         else:
-            rz = -rx - ry
+            return False
 
-        return Cube(rx, ry, rz)
+    def get_hex_from_axial(self, item: Axial) -> Hex:
+        return self.table[self.__hash_coord(item)]
 
-    def lerp(self, a: float, b: float, t: float) -> int:
-        return a + (b - a) * t
+    @staticmethod
+    def __unpack_layout(layout) -> tuple:
+        return (layout.orientation, layout.size, layout.origin)
 
-    def cube_lerp(self, a: Cube, b: Cube, t) -> Cube:
-        return Cube(self.lerp(a.x, b.x, t), self.lerp(a.y, b.y, t), self.lerp(a.z, b.z, t))
-
-    def cube_drawline(self, a: Cube, b: Cube) -> list:
-        N = self._cube_distance(a, b)
-        a_nudge = Cube(a.x + 0.000001, a.y + 0.000001, a.z - 0.000002)
-        b_nudge = Cube(b.x + 0.000001, b.y + 0.000001, b.z - 0.000002)
-        step = 1.0 / max(N, 1)
-
-        results = []
-        for i in range(0, N + 1):
-            results.append(self.cube_round(self.cube_lerp(a_nudge, b_nudge, step * i)))
-
-        return results
-
-    def hex_range(self, center: Cube, distance: int) -> list:
-        results = []
-        for i in range(-distance, distance):
-            # Todo: Finish this function
-            pass
+    def pixel_to_hex(self, layout, point: Point):
+        orientation, size, origin = self.__unpack_layout(layout)
+        pt = Point((point.x - origin.x) / size.x, (point.y - origin.y) / size.y)
+        q = orientation.b0 * pt.x + orientation.b1 * pt.y
+        r = orientation.b2 * pt.x + orientation.b3 * pt.y
+        return Axial(q, r)
