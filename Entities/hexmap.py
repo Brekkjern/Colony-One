@@ -2,7 +2,7 @@ import math
 import collections
 
 Point = collections.namedtuple("Point", ["x", "y"])
-Tuple_Axial = collections.namedtuple("Tuple_Axial", ["q", "r", "s"])
+TupleAxial = collections.namedtuple("TupleAxial", ["q", "r", "s"])
 
 # Statics for use in calculating between hex and pixel values
 Orientation = collections.namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
@@ -151,13 +151,13 @@ class Axial(object):
         """
         return a + (b - a) * step
 
-    def __cube_lerp(self, a: Tuple_Axial, b: Tuple_Axial, step: float):
+    def __cube_lerp(self, a: TupleAxial, b: TupleAxial, step: float):
         """ Lerp a cube co-ordinate
 
         :param a: Start axial
-        :type a: Tuple_Axial
+        :type a: TupleAxial
         :param b: End axial
-        :type b: Tuple_Axial
+        :type b: TupleAxial
         :param step: Size of step
         :type step: int, float
         :return: Axial of current position in lerp
@@ -180,8 +180,8 @@ class Axial(object):
         :rtype: list
         """
         distance = self.distance(other)
-        self_nudge = Tuple_Axial(self.q + 0.000001, self.r + 0.000001, self.s - 0.000002)
-        other_nudge = Tuple_Axial(other.q + 0.000001, other.r + 0.000001, other.s - 0.000002)
+        self_nudge = TupleAxial(self.q + 0.000001, self.r + 0.000001, self.s - 0.000002)
+        other_nudge = TupleAxial(other.q + 0.000001, other.r + 0.000001, other.s - 0.000002)
         step = 1.0 / max(distance, 1)
 
         results = []
