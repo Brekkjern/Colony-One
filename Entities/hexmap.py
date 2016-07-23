@@ -180,9 +180,7 @@ class Axial(object):
         :return: Axial of current position in lerp
         :rtype: Axial
         """
-        return Axial(self.round_axial(self.__lerp(a.q, b.q, step),
-                     self.__lerp(a.r, b.r, step),
-                     self.__lerp(a.s, b.s, step)))
+        return self.round_axial(self.__lerp(a.q, b.q, step), self.__lerp(a.r, b.r, step), self.__lerp(a.s, b.s, step))
 
     def drawline(self, other) -> list:
         """ Draw line from tuple to destination
@@ -250,6 +248,7 @@ class Hex(Axial):
     Any co-ordinate should always resolve to (q + r + s == 0).
     Upon initialisation the positional variables will be rounded to integers.
     """
+
     def __init__(self, q: float, r: float, s: float = None):
         """ Initialise Hex object
 
@@ -297,6 +296,7 @@ class Hex(Axial):
 
 class Map(object):
     """ Class handling game map"""
+
     def __init__(self, table: dict = None):
         """ Instantiates the map
 
