@@ -230,6 +230,23 @@ class Axial(object):
         y = (orientation.f2 * self.q + orientation.f3 * self.r) * size.y
         return Point(x + origin.x, y + origin.y)
 
+    @staticmethod
+    def pixel_to_hex(layout: Layout, location: Point):
+        """ Finds the Axial value of a square point
+
+        :param layout: Pointy or flat-top layout
+        :type layout: Layout
+        :param location: Square point to calculate
+        :type location: Point
+        :return: Cubic location of input point
+        :rtype: Axial
+        """
+        orientation, size, origin = layout.orientation, layout.size, layout.origin
+        pt = Point((location.x - origin.x) / size.x, (location.y - origin.y) / size.y)
+        q = orientation.b0 * pt.x + orientation.b1 * pt.y
+        r = orientation.b2 * pt.x + orientation.b3 * pt.y
+        return Axial.round_axial(q, r)
+
     def hex_range(self, distance: int) -> list:
         """ Find all coordinates within *distance*
 
@@ -369,20 +386,3 @@ class Map(object):
         :rtype: Hex
         """
         return self.table[self.__hash_coord(item)]
-
-    @staticmethod
-    def pixel_to_hex(layout: Layout, location: Point):
-        """ Finds the Axial value of a square point
-
-        :param layout: Pointy or flat-top layout
-        :type layout: Layout
-        :param location: Square point to calculate
-        :type location: Point
-        :return: Cubic location of input point
-        :rtype: Axial
-        """
-        orientation, size, origin = layout.orientation, layout.size, layout.origin
-        pt = Point((location.x - origin.x) / size.x, (location.y - origin.y) / size.y)
-        q = orientation.b0 * pt.x + orientation.b1 * pt.y
-        r = orientation.b2 * pt.x + orientation.b3 * pt.y
-        return Axial.round_axial(q, r)
