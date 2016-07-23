@@ -35,6 +35,10 @@ class Axial(object):
         if s is None:
             s = -q - r
 
+        # Checks if variables are ints
+        if not (isinstance(q, int) and isinstance(r, int) and isinstance(s, int)):
+            raise ValueError("Invalid co-ordinates. Values are not integers.")
+
         # Make sure coordinates sum to 0
         if (q + r + s != 0):
             raise ValueError("Invalid co-ordinates. Sum is not 0")
