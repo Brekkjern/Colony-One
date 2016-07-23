@@ -16,48 +16,32 @@ class Axial(object):
 
     Object representing a point in cubic space.
     Any co-ordinate should always resolve to (q + r + s == 0).
-    Upon initialisation the positional variables will be rounded to integers.
     """
 
-    def __init__(self, q: float, r: float, s: float = None):
+    def __init__(self, q: int, r: int, s: int = None):
         """ Initialise cubic object
 
-        Rounds to closest integers and errors if (q + r + s != 0)
+        Errors if (q + r + s != 0)
 
         :param q: First co-ordinate
-        :type q: int, float
+        :type q: int
         :param r: Second co-ordinate
-        :type r: int, float
+        :type r: int
         :param s: Third co-ordinate. If not given, it is calculated to -q -s
-        :type s: int, float
+        :type s: int
         """
 
         # Calculate s if there are only 2 arguments given.
-        if not s:
+        if s is None:
             s = -q - r
 
-        # Round values to get coordinates as integers
-        rq = round(q)
-        rr = round(r)
-        rs = round(s)
-
-        x_diff = abs(rq - q)
-        y_diff = abs(rr - r)
-        z_diff = abs(rs - s)
-
-        if x_diff > y_diff and x_diff > z_diff:
-            rq = -rr - rs
-        elif y_diff > z_diff:
-            rr = -rq - rs
-        else:
-            rs = -rq - rr
-
         # Make sure coordinates sum to 0
-        assert (rq + rr + rs == 0)
+        if (q + r + s != 0):
+            raise ValueError("Invalid co-ordinates. Sum is not 0")
 
-        self.q = rq
-        self.r = rr
-        self.s = rs
+        self.q = q
+        self.r = r
+        self.s = s
 
     def __eq__(self, other) -> bool:
         """ Check if another point is in same location
@@ -98,6 +82,39 @@ class Axial(object):
         :rtype: Axial
         """
         return Axial(self.q * other, self.r * other, self.s * other)
+
+    @staticmethod
+    def round_axial(q: float, r: float, s: float = None):
+        """ Round values to get coordinates as integers
+
+        :param q: First co-ordinate
+        :type q: int, float
+        :param r: Second co-ordinate
+        :type r: int, float
+        :param s: Third co-ordinate. Optional.
+        :type s: int, float
+        :return: Axial with int co-ordinates
+        :rtype: Axial
+        """
+        if s is None:
+            s = -q - r
+
+        rq = round(q)
+        rr = round(r)
+        rs = round(s)
+
+        q_diff = abs(rq - q)
+        r_diff = abs(rr - r)
+        s_diff = abs(rs - s)
+
+        if q_diff > r_diff and q_diff > s_diff:
+            rq = -rr - rs
+        elif r_diff > s_diff:
+            rr = -rq - rs
+        else:
+            rs = -rq - rr
+
+        return Axial(rq, rr, rs)
 
     @staticmethod
     def vector_length(vector) -> float:
@@ -163,9 +180,9 @@ class Axial(object):
         :return: Axial of current position in lerp
         :rtype: Axial
         """
-        return Axial(self.__lerp(a.q, b.q, step),
+        return Axial(self.round_axial(self.__lerp(a.q, b.q, step),
                      self.__lerp(a.r, b.r, step),
-                     self.__lerp(a.s, b.s, step))
+                     self.__lerp(a.s, b.s, step)))
 
     def drawline(self, other) -> list:
         """ Draw line from tuple to destination
@@ -330,7 +347,7 @@ class Map(object):
         return self.table[self.__hash_coord(item)]
 
     @staticmethod
-    def pixel_to_hex(layout, location: Point):
+    def pixel_to_hex(layout: Layout, location: Point):
         """ Finds the Axial value of a square point
 
         :param layout: Pointy or flat-top layout
@@ -344,4 +361,4 @@ class Map(object):
         pt = Point((location.x - origin.x) / size.x, (location.y - origin.y) / size.y)
         q = orientation.b0 * pt.x + orientation.b1 * pt.y
         r = orientation.b2 * pt.x + orientation.b3 * pt.y
-        return Axial(q, r)
+        return Axial.round_axial(q, r)
