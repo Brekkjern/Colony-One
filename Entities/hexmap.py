@@ -244,9 +244,8 @@ directions = [Axial(+1, 0), Axial(+1, -1), Axial(0, -1), Axial(-1, 0), Axial(-1,
 class Hex(Axial):
     """ Object representing a hex on a map. Extends Axial.
 
-    Object representing a point in cubic space with
+    Object representing a hex on a map. Extends Axial.
     Any co-ordinate should always resolve to (q + r + s == 0).
-    Upon initialisation the positional variables will be rounded to integers.
     """
 
     def __init__(self, q: float, r: float, s: float = None):
