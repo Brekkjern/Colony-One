@@ -87,6 +87,14 @@ class Axial(object):
         """
         return Axial(self.q * other, self.r * other, self.s * other)
 
+    def __hash__(self) -> int:
+        """ Hashes a tuple of the two first values of the co-ordinate
+
+        :return: Hash value of two first co-ordinate values
+        :rtype: int
+        """
+        return hash((self.q, self.r))
+
     @staticmethod
     def round_axial(q: float, r: float, s: float = None):
         """ Round values to get coordinates as integers
@@ -239,6 +247,19 @@ class Axial(object):
                 results.append(self + Axial(dx, dy, dz))
 
         return results
+
+    @staticmethod
+    def intersecting_range(a: list, b: list) -> set:
+        """ Finds overlapping co-ordinates from two ranges
+
+        :param a: List of axial points
+        :type a: list
+        :param b: List of axial points
+        :type b: list
+        :return: Set of points that are in both lists
+        :rtype: set
+        """
+        return set(a).intersection(b)
 
 
 # Helper table to find axial neighbours
