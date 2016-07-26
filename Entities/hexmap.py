@@ -86,6 +86,11 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
         """
         return hash((self.q, self.r))
 
+    def __repr__(self) -> str:
+        return "Axial({0}, {1}, {2})".format(self.q, self.r, self.s)
+
+    def __str__(self) -> str:
+        return "q: {0}\tr: {1}\ts: {2}".format(self.q, self.r, self.s)
 
 class Hex(Axial):
     """ Object representing a hex on a map. Extends Axial.
@@ -97,7 +102,7 @@ class Hex(Axial):
     def __new__(cls, q: int, r: int, s: int = None):
         """ Initialise Hex object
 
-        Rounds to closest integers and errors if (q + r + s != 0)
+        Errors if (q + r + s != 0)
 
         :param q: First co-ordinate
         :type q: int
