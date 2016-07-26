@@ -1,17 +1,18 @@
 import math
-import collections
+from collections import namedtuple
 
-Point = collections.namedtuple("Point", ["x", "y"])
+Point = namedtuple("Point", ["x", "y"])
 
-class Axial(object):
+
+class Axial(namedtuple("_Axial", ["q", "r", "s"])):
     """ Object representing a point in cubic space.
 
     Object representing a point in cubic space.
     Any co-ordinate should always resolve to (q + r + s == 0).
     """
 
-    def __init__(self, q: int, r: int, s: int = None):
-        """ Initialise cubic object
+    def __new__(cls, q: int, r: int, s: int = None):
+        """ Create cubic object
 
         Errors if (q + r + s != 0)
 
@@ -32,12 +33,10 @@ class Axial(object):
             raise ValueError("Invalid co-ordinates. Values are not integers.")
 
         # Make sure coordinates sum to 0
-        if (q + r + s != 0):
+        if q + r + s != 0:
             raise ValueError("Invalid co-ordinates. Sum is not 0")
 
-        self.q = q
-        self.r = r
-        self.s = s
+        return super().__new__(cls, q, r, s)
 
     def __eq__(self, other) -> bool:
         """ Check if another point is in same location
@@ -69,7 +68,7 @@ class Axial(object):
         """
         return Axial(self.q - other.q, self.r - other.r, self.s - other.s)
 
-    def __mul__(self, other: float):
+    def __mul__(self, other: int):
         """ Multiply co-ordinates of axial
 
         :param other: Number to multiply with
@@ -77,7 +76,7 @@ class Axial(object):
         :return: Axial of new location
         :rtype: Axial
         """
-        return Axial(self.q * other, self.r * other, self.s * other)
+        return Map.round_axial(self.q * other, self.r * other, self.s * other)
 
     def __hash__(self) -> int:
         """ Hashes a tuple of the two first values of the co-ordinate
@@ -95,27 +94,27 @@ class Hex(Axial):
     Any co-ordinate should always resolve to (q + r + s == 0).
     """
 
-    def __init__(self, q: float, r: float, s: float = None):
+    def __new__(cls, q: int, r: int, s: int = None):
         """ Initialise Hex object
 
         Rounds to closest integers and errors if (q + r + s != 0)
 
         :param q: First co-ordinate
-        :type q: int, float
+        :type q: int
         :param r: Second co-ordinate
-        :type r: int, float
+        :type r: int
         :param s: Third co-ordinate. If not given, it is calculated to -q -s
-        :type s: int, float
+        :type s: int
         """
-        super(Hex, self).__init__(q, r, s)
+        super().__new__(cls, q, r, s)
 
 
 class Map(object):
     """ Class handling game map"""
 
-    TupleAxial = collections.namedtuple("TupleAxial", ["q", "r", "s"])
-    Orientation = collections.namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
-    Layout = collections.namedtuple("Layout", ["orientation", "size", "origin"])
+    TupleAxial = namedtuple("TupleAxial", ["q", "r", "s"])
+    Orientation = namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
+    Layout = namedtuple("Layout", ["orientation", "size", "origin"])
 
     # Helper table to find axial neighbours
     directions = [Axial(+1, 0), Axial(+1, -1), Axial(0, -1), Axial(-1, 0), Axial(-1, +1), Axial(0, +1)]
@@ -164,7 +163,7 @@ class Map(object):
         return self.table[hash(item)]
 
     @staticmethod
-    def _round_axial(q: float, r: float, s: float = None):
+    def round_axial(q: float, r: float, s: float = None):
         """ Round values to get coordinates as integers
 
         :param q: First co-ordinate
@@ -194,7 +193,7 @@ class Map(object):
         else:
             rs = -rq - rr
 
-        return Axial(rq, rr, rs)
+        return Axial(int(rq), int(rr), int(rs))
 
     @staticmethod
     def vector_length(vector: Axial) -> float:
@@ -261,7 +260,8 @@ class Map(object):
         :return: Axial of current position in lerp
         :rtype: Axial
         """
-        return self._round_axial(self.__lerp(start.q, end.q, step), self.__lerp(start.r, end.r, step), self.__lerp(start.s, end.s, step))
+        return self.round_axial(self.__lerp(start.q, end.q, step), self.__lerp(start.r, end.r, step),
+                                self.__lerp(start.s, end.s, step))
 
     def draw_line(self, start: Axial, end: Axial) -> list:
         """ Draw line from tuple to destination
@@ -278,8 +278,8 @@ class Map(object):
         :rtype: list
         """
         distance = self.distance(start, end)
-        start_nudge = TupleAxial(start.q + 0.000001, start.r + 0.000001, start.s - 0.000002)
-        end_nudge = TupleAxial(end.q + 0.000001, end.r + 0.000001, end.s - 0.000002)
+        start_nudge = self.TupleAxial(start.q + 0.000001, start.r + 0.000001, start.s - 0.000002)
+        end_nudge = self.TupleAxial(end.q + 0.000001, end.r + 0.000001, end.s - 0.000002)
         step = 1.0 / max(distance, 1)
 
         results = []
@@ -318,9 +318,10 @@ class Map(object):
         pt = Point((location.x - origin.x) / size.x, (location.y - origin.y) / size.y)
         q = orientation.b0 * pt.x + orientation.b1 * pt.y
         r = orientation.b2 * pt.x + orientation.b3 * pt.y
-        return self._round_axial(q, r)
+        return self.round_axial(q, r)
 
-    def axial_range(self, center: Axial, distance: int) -> list:
+    @staticmethod
+    def axial_range(center: Axial, distance: int) -> list:
         """ Find all coordinates within *distance*
 
         :param center: Center point of range
@@ -384,3 +385,46 @@ class Map(object):
             corners.append(Point(center.x + offset.x, center.y + offset.y))
 
         return corners
+
+    def draw_circle(self, center: Axial, radius: int) -> list:
+        """ Draw a circle on the map
+
+        :param center: Center of the circle
+        :type center: Axial
+        :param radius: Radius of the circle
+        :type radius: int
+        :return: List of axial coordinates that make up the circle
+        :rtype: list
+        """
+
+        # To avoid a multiply by zero issue, set radius to 1 instead of 0
+        if radius == 0:
+            radius = 1
+
+        results = []
+
+        cube = center + (self.get_axial_neighbour_coordinate(center, 4) * radius)
+
+        for direction in range(0, 6):
+            for side in range(0, radius + 1):
+                results.append(cube)
+                cube = self.get_axial_neighbour_coordinate(cube, direction)
+
+        return results
+
+    def draw_spiral(self, center: Axial, radius: int) -> list:
+        """ Draw a spiral on the map
+
+        :param center: Center of spiral
+        :type center: Axial
+        :param radius: Radius of spiral
+        :type radius: int
+        :return: Ordered list of axials
+        :rtype: list
+        """
+
+        results = [center]
+        for step in range(1, radius):
+            results += self.draw_circle(center, step)
+
+        return results
