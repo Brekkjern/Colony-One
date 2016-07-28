@@ -111,7 +111,12 @@ class Hex(Axial):
         :param s: Third co-ordinate. If not given, it is calculated to -q -s
         :type s: int
         """
-        super().__new__(cls, q, r, s)
+        return super().__new__(cls, q, r, s)
+
+    def __init__(self, q, r, s=None, see_through: bool = True, block_movement: bool = False):
+        super(Hex, self).__init__()
+        self.block_movement = block_movement
+        self.see_through = see_through
 
 
 class Map(object):
@@ -157,15 +162,15 @@ class Map(object):
         else:
             return False
 
-    def get_hex_from_map(self, item: Axial) -> Hex:
+    def get_hex_from_map(self, axial: Axial) -> Hex:
         """ Gets the hex in the co-ordinate slot of the axial
 
-        :param item: Co-ordinate object to get hex from
-        :type item: Axial
+        :param axial: Co-ordinate object to get hex from
+        :type axial: Axial
         :return: Hexagon item
         :rtype: Hex
         """
-        return self.table[hash(item)]
+        return self.table[hash(axial)]
 
     @staticmethod
     def round_axial(q: float, r: float, s: float = None):
@@ -431,5 +436,27 @@ class Map(object):
         results = [center]
         for step in range(1, radius):
             results += self.draw_circle(center, step)
+
+        return results
+
+    def get_field_of_view(self, center: Axial, radius: int) -> list:
+        """ Return a list of all tiles that can be seen from center
+        
+        :param center: Point of view to calculate from
+        :param radius: Radius to calculate for
+        :return: List of Hex objects that are visible from center
+        """
+        results = []
+
+        circle = self.draw_circle(center, radius)
+
+        for point in circle:
+            line = self.draw_line(center, point)
+            for axial in line:
+                line_hex = self.get_hex_from_map(axial)
+                if line_hex.see_through:
+                    results.append(line_hex)
+                else:
+                    break
 
         return results
