@@ -92,6 +92,7 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
     def __str__(self) -> str:
         return "q: {0}\tr: {1}\ts: {2}".format(self.q, self.r, self.s)
 
+
 class Hex(Axial):
     """ Object representing a hex on a map. Extends Axial.
 
@@ -113,7 +114,7 @@ class Hex(Axial):
         """
         return super().__new__(cls, q, r, s)
 
-    def __init__(self, q, r, s=None, see_through: bool = True, block_movement: bool = False):
+    def __init__(self, q, r, s = None, see_through: bool = True, block_movement: bool = False):
         super(Hex, self).__init__()
         self.block_movement = block_movement
         self.see_through = see_through
@@ -454,7 +455,7 @@ class Map(object):
             line = self.draw_line(center, point)
             for axial in line:
                 line_hex = self.get_hex_from_map(axial)
-                if line_hex.see_through:
+                if not line_hex in results and line_hex.see_through:
                     results.append(line_hex)
                 else:
                     break
