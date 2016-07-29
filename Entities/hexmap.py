@@ -100,24 +100,29 @@ class Hex(Axial):
     Any co-ordinate should always resolve to (q + r + s == 0).
     """
 
-    def __new__(cls, q: int, r: int, s: int = None):
+    def __new__(cls, q: int, r: int, s: int = None, transparent: bool = True, passable: bool = True):
         """ Initialise Hex object
 
         Errors if (q + r + s != 0)
 
         :param q: First co-ordinate
-        :type q: int
         :param r: Second co-ordinate
-        :type r: int
         :param s: Third co-ordinate. If not given, it is calculated to -q -s
-        :type s: int
+        :param transparent: Whether items in the hex blocks FoV
+        :param passable: Whether items in the hex blocks movement
         """
-        return super().__new__(cls, q, r, s)
+        obj = super().__new__(cls, q, r, s)
+        obj.transparent = transparent
+        obj.passable = passable
+        return obj
 
-    def __init__(self, q, r, s = None, see_through: bool = True, block_movement: bool = False):
-        super(Hex, self).__init__()
-        self.block_movement = block_movement
-        self.see_through = see_through
+    def __repr__(self) -> str:
+        return "Hex({0}, {1}, {2}, transparent = {3}, passable = {4})".format(self.q, self.r, self.s, self.transparent,
+                                                                              self.passable)
+
+    def __str__(self):
+        return "q: {0}\tr: {1}\ts: {2}\ttransparent: {3}\tpassable: {4}".format(self.q, self.r, self.s,
+                                                                                self.transparent, self.passable)
 
 
 class Map(object):
@@ -455,7 +460,7 @@ class Map(object):
             line = self.draw_line(center, point)
             for axial in line:
                 line_hex = self.get_hex_from_map(axial)
-                if not line_hex in results and line_hex.see_through:
+                if not line_hex in results and line_hex.transparent:
                     results.append(line_hex)
                 else:
                     break
@@ -478,7 +483,7 @@ class Map(object):
             for cube in fringes[i - 1]:
                 for direction in range(0, 6):
                     neighbour = self.get_hex_from_map(self.get_axial_neighbour_coordinate(cube, direction))
-                    if neighbour not in visited and neighbour.block_movement:
+                    if neighbour not in visited and neighbour.passable:
                         visited.add(neighbour)
                         fringes[i].append(neighbour)
 
