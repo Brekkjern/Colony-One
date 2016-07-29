@@ -460,10 +460,10 @@ class Map(object):
             line = self.draw_line(center, point)
             for axial in line:
                 line_hex = self.get_hex_from_map(axial)
-                if not line_hex in results and line_hex.transparent:
+                if not line_hex in results:
                     results.append(line_hex)
-                else:
-                    break
+                    if not line_hex.transparent:
+                        break
 
         return results
 
