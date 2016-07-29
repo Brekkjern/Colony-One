@@ -120,7 +120,7 @@ class Hex(Axial):
         return "Hex({0}, {1}, {2}, transparent = {3}, passable = {4})".format(self.q, self.r, self.s, self.transparent,
                                                                               self.passable)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "q: {0}\tr: {1}\ts: {2}\ttransparent: {3}\tpassable: {4}".format(self.q, self.r, self.s,
                                                                                 self.transparent, self.passable)
 
