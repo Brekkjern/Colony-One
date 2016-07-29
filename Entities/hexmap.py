@@ -461,3 +461,25 @@ class Map(object):
                     break
 
         return results
+
+    def draw_available_movement(self, start: Axial, distance: int) -> set:
+        """ Return a set of possible tiles to move to from start point
+
+        :param start: Start point for movement
+        :param distance: The distance to move
+        :return: Set of possible hexes to move to
+        """
+        visited = set().add(self.get_hex_from_map(start))
+        fringes = []
+        fringes.append(self.get_hex_from_map(start))
+
+        for i in range(1, distance + 1):
+            fringes.append([])
+            for cube in fringes[i - 1]:
+                for direction in range(0, 6):
+                    neighbour = self.get_hex_from_map(self.get_axial_neighbour_coordinate(cube, direction))
+                    if neighbour not in visited and neighbour.block_movement:
+                        visited.add(neighbour)
+                        fringes[i].append(neighbour)
+
+        return visited
