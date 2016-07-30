@@ -92,6 +92,14 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
     def __str__(self) -> str:
         return "q: {0}\tr: {1}\ts: {2}".format(self.q, self.r, self.s)
 
+    def get_tuple(self) -> Point:
+        """ Helper method for managing the map table
+
+        :return: Tuple containing first and second coordinate
+        :rtype: Point
+        """
+        return Point(self.q, self.r)
+
 
 class Hex(Axial):
     """ Object representing a hex on a map. Extends Axial.
@@ -136,8 +144,10 @@ class Map(object):
     directions = [Axial(+1, 0), Axial(+1, -1), Axial(0, -1), Axial(-1, 0), Axial(-1, +1), Axial(0, +1)]
 
     # Statics for use in calculating between hex and pixel values
-    layout_pointy = Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, math.sqrt(3.0) / 3.0, -1.0 / 3.0,
-                                0.0, 2.0 / 3.0, 0.5)
+    orientation_pointy = Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, math.sqrt(3.0) / 3.0,
+                                     -1.0 / 3.0,
+                                     0.0, 2.0 / 3.0, 0.5)
+    active_layout = Layout(orientation_pointy, Point(1, 1), Point(0, 0))
 
     def __init__(self, table: dict = None):
         """ Instantiates the map
@@ -146,7 +156,7 @@ class Map(object):
         :type table: dict
         """
         if not table:
-            table = {}
+            table = dict()
 
         self.table = table
 
@@ -161,9 +171,10 @@ class Map(object):
         :return: True if hex is added
         :rtype: bool
         """
-        hashed_item = hash(item)
-        if not self.table[hashed_item]:
-            self.table[hashed_item] = item
+        item_tuple = item.get_tuple()
+        print(item_tuple)
+        if item_tuple not in self.table:
+            self.table[item_tuple] = item
             return True
         else:
             return False
@@ -176,7 +187,7 @@ class Map(object):
         :return: Hexagon item
         :rtype: Hex
         """
-        return self.table[hash(axial)]
+        return self.table[axial.get_tuple()]
 
     @staticmethod
     def round_axial(q: float, r: float, s: float = None):
@@ -305,7 +316,7 @@ class Map(object):
         return results
 
     @staticmethod
-    def hex_to_pixel(coordinate: Axial, layout: Layout) -> Point:
+    def hex_to_pixel(coordinate: Axial, layout: Layout = active_layout) -> Point:
         """ Find pixel co-ordinate of hex
 
         :param coordinate: Axial location to convert to 2D point
@@ -337,23 +348,22 @@ class Map(object):
         return self.round_axial(q, r)
 
     @staticmethod
-    def axial_range(center: Axial, distance: int) -> list:
-        """ Find all coordinates within *distance*
+    def draw_range(center: Axial, radius: int) -> list:
+        """ Find all coordinates within distance from center
 
         :param center: Center point of range
         :type center: Axial
-        :param distance: Integer that describes search range
-        :type distance: int
+        :param radius: Integer that describes search range
+        :type radius: int
         :return: List of Axial objects within the range
         :rtype: list
         """
         results = []
-        for dx in range(-distance, distance + 1):
-            min_range = max(-distance, -dx - distance)
-            max_range = min(distance, (-dx + distance))
+        for dx in range(-radius, radius + 1):
+            min_range = max(-radius, -dx - radius)
+            max_range = min(radius, (-dx + radius))
             for dy in range(min_range, max_range + 1):
-                dz = -dx - dy
-                results.append(center + Axial(dx, dy, dz))
+                results.append(center + Axial(dx, dy))
 
         return results
 
