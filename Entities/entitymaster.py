@@ -1,4 +1,4 @@
-from Entities.colonist import Colonist
+from Entities.Colonists.colonist import Colonist
 from Entities.entity import Entity
 
 

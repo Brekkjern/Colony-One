@@ -2,10 +2,10 @@ import math
 import weakref
 
 import conf
+from Entities.Colonists.skill import Skill
+from Entities.Colonists.trait import Trait
 from Entities.entity import Entity
-from Entities.skill import Skill
 from Entities.task import Task
-from Entities.trait import Trait
 
 # Default value for attributes
 default_attribute_value = 10

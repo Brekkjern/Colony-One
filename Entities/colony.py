@@ -1,8 +1,8 @@
 import weakref
 
-from Entities.colonist import Colonist
+from Entities.Buildings.structure import Structure
+from Entities.Colonists.colonist import Colonist
 from Entities.entity import Entity
-from Entities.structure import Structure
 
 
 class Colony(Entity):

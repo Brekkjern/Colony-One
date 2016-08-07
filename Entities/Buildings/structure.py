@@ -1,7 +1,7 @@
 import weakref
 
-from Entities.worldentity import WorldEntity
 from Entities.hexmap import Axial
+from Entities.worldentity import WorldEntity
 
 
 class Structure(WorldEntity):
