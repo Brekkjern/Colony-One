@@ -10,7 +10,7 @@ class Structure(WorldEntity):
     # Table to hold all references to structure entities. Allows for fast listing of all entities.
     structures = []
 
-    def __init__(self, entity_id, location: Axial, powered=None, health=100, task=None, input_slot=None, output_slot=None):
+    def __init__(self, entity_id, location: Axial, health=100, task=None, input_slot=None, output_slot=None):
         super(Structure, self).__init__(entity_id, location)
         self.__class__.structures.append(weakref.proxy(self))
 
@@ -22,7 +22,6 @@ class Structure(WorldEntity):
 
         self.destroyed = False
         self.health = health
-        self.powered = powered
         self.task = task
         self.input_slot = input_slot
         self.output_slot = output_slot
@@ -58,8 +57,3 @@ class Structure(WorldEntity):
         else:
             return None
 
-    def needs_power(self):
-        if self.powered is None:
-            return False
-        else:
-            return True
