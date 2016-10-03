@@ -9,8 +9,7 @@ from Entities.task import Task
 
 # Default value for attributes
 default_attribute_value = 10
-base_attributes = ["wisdom", "logic", "focus"
-                                      "endurance", "dexterity"]
+base_attributes = ["wisdom", "logic", "focus", "endurance", "dexterity"]
 
 
 class Colonist(Entity):
