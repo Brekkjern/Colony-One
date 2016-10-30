@@ -10,8 +10,8 @@ class Entity(object):
         self.entity_id = entity_id
         self.alive = True
 
-    def update(self):
+    def update(self, *args):
         pass
 
-    def tick(self):
+    def tick(self, *args):
         pass
