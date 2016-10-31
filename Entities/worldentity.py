@@ -1,4 +1,5 @@
 import weakref
+
 from Entities.entity import Entity
 from Entities.hexmap import Axial
 
@@ -12,8 +13,8 @@ class WorldEntity(Entity):
         self.__class__.world_entities.append(weakref.proxy(self))
         self.location = location
 
-    def update(self):
-        super(WorldEntity, self).update()
+    def update(self, *args):
+        super(WorldEntity, self).update(*args)
 
-    def tick(self):
-        super(WorldEntity, self).tick()
+    def tick(self, *args):
+        super(WorldEntity, self).tick(*args)
