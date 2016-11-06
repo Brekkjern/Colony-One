@@ -7,7 +7,7 @@ from Entities.worldentity import WorldEntity
 class Structure(WorldEntity):
     """Object model for structures."""
 
-    # Table to hold all references to structure entities. Allows for fast listing of all entities.
+    # Table to hold all references to structure entities. Allows for fast listing of all structure entities.
     structures = []
 
     def __init__(self, entity_id, location: Axial, health = 100, max_health = 100, task = None, input_slot = None,
