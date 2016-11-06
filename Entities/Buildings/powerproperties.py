@@ -1,6 +1,7 @@
 class PowerGenerator(object):
     def __init__(self, power_production: float):
         self.power_production = power_production
+        self.idle = False
 
     def update(self):
         pass

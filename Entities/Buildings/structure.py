@@ -1,19 +1,16 @@
-import weakref
-
+from Entities.colony import Colony
 from Entities.hexmap import Axial
+from Entities.task import Task
 from Entities.worldentity import WorldEntity
 
 
 class Structure(WorldEntity):
     """Object model for structures."""
 
-    # Table to hold all references to structure entities. Allows for fast listing of all structure entities.
-    structures = []
-
-    def __init__(self, entity_id, location: Axial, health = 100, max_health = 100, task = None, input_slot = None,
+    def __init__(self, entity_id, colony: Colony, location: Axial, health = 100, max_health = 100, task: Task = None,
+                 input_slot = None,
                  output_slot = None):
         super(Structure, self).__init__(entity_id, location)
-        self.__class__.structures.append(weakref.proxy(self))
 
         if not input_slot:
             input_slot = []
@@ -21,6 +18,7 @@ class Structure(WorldEntity):
         if not output_slot:
             output_slot = []
 
+        self.colony = colony
         self.destroyed = False
         self.__health = health
         self.max_health = max_health
@@ -33,9 +31,8 @@ class Structure(WorldEntity):
 
         self.output_slot.append(self.check_progress())
 
-    def tick(self, power_mod, *args) -> None:
+    def tick(self, *args) -> None:
         super(Structure, self).tick()
-        self.task.power_modifier = power_mod
 
         # TODO: Add working task here. Possibly add composition for colonist workplaces?
 
@@ -58,7 +55,7 @@ class Structure(WorldEntity):
         self.__health += dmg
 
     def work(self, work):
-        self.task.perform_task(work)
+        self.task.progress_task(work)
 
     def check_progress(self):
         if self.task.check_progress():
