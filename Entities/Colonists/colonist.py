@@ -18,32 +18,25 @@ class Colonist(Entity):
     # Table to hold all references to colonist entities. Allows for fast listing of all entities.
     colonists = []
 
-    def __init__(self, entity_id: int, morale: float = 100, health: float = 100, creation_tick: int = None, education = None,
+    def __init__(self, entity_id: int, morale: float = 100, health: float = 100, creation_tick: int = None,
                  hunger: float = 0):
         super(Colonist, self).__init__(entity_id)
         self.__class__.colonists.append(weakref.proxy(self))
 
-        if not education:
-            education = {'engineering': 0, 'science': 0}
-
-        self.education = education
         self.morale = morale
         self.health = health
         self._creation_tick = conf.tick if creation_tick is None else creation_tick
         self.hunger = hunger
+        self.dead = False
 
-        # Stats
-        self.attributes = {}
-
-        self.skills = {}
-
-        # Applied traits
+        # Applied traits and skills
         self.traits = []
+        self.skills = {}
 
     def update(self):
         super(Colonist, self).update()
         if self.health > 0:
-            self.alive = False
+            self.dead = True
 
     def tick(self):
         super(Colonist, self).tick()
@@ -52,9 +45,9 @@ class Colonist(Entity):
         self.hunger -= 1
 
         if self.get_age() < self.life_expectancy():
-            self.alive = False
+            self.dead = True
 
-        if not self.alive:
+        if self.dead:
             print("DEBUG: Colonist {} died on tick {}.".format(self.entity_id, conf.tick))
 
     # def get_attribute_value(self, attribute: str) -> float:
