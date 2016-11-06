@@ -5,16 +5,18 @@ class PowerGenerator(object):
     def update(self):
         pass
 
-    def tick(self):
+    def tick(self, status):
         pass
 
 
 class PowerConsumer(object):
-    def __init__(self, power_consumption: float):
+    def __init__(self, power_consumption: float, idle_threshold: float):
         self.power_consumption = power_consumption
+        self.idle_threshold = idle_threshold
+        self.idle = False
 
     def update(self):
         pass
 
-    def tick(self):
-        pass
+    def tick(self, status, power_modifier):
+        self.idle = power_modifier < self.idle_threshold
