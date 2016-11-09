@@ -4,7 +4,12 @@ from Entities.Colonists.colonist import Colonist
 
 
 class Colonist_Workplace(object):
+
+    # Table to hold all references to Colonist_Workplace components.
+    colonist_workplaces = []
+
     def __init__(self, assigned_workers: List[Colonist] = None):
+        self.__class__.colonist_workplaces.append(self)
         if not assigned_workers:
             assigned_workers = []
 
