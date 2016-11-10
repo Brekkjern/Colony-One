@@ -1,5 +1,7 @@
 import math
 from collections import namedtuple
+from typing import List
+from typing import Set
 
 Point = namedtuple("Point", ["x", "y"])
 
@@ -12,78 +14,37 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
     """
 
     def __new__(cls, q: int, r: int, s: int = None):
-        """ Create cubic object
-
-        Errors if (q + r + s != 0)
-
+        """Create cubic object
+        Requires (q + r + s == 0)
         :param q: First co-ordinate
-        :type q: int
         :param r: Second co-ordinate
-        :type r: int
-        :param s: Third co-ordinate. If not given, it is calculated to -q -s
-        :type s: int
+        :param s: Third co-ordinate. If not given, it is calculated to the value of (-q -s)
         """
 
-        # Calculate s if there are only 2 arguments given.
         if s is None:
             s = -q - r
 
-        # Checks if variables are ints
         if not (isinstance(q, int) and isinstance(r, int) and isinstance(s, int)):
             raise ValueError("Invalid co-ordinates. Values are not integers.")
 
-        # Make sure coordinates sum to 0
         if q + r + s != 0:
             raise ValueError("Invalid co-ordinates. Sum is not 0")
 
         return super().__new__(cls, q, r, s)
 
     def __eq__(self, other) -> bool:
-        """ Check if another point is in same location
-
-        :param other: The other object to compare with
-        :type other: Axial
-        :return: True if co-ordinates are the same
-        :rtype: bool
-        """
         return self.q == other.q and self.r == other.r and self.s == other.s
 
     def __add__(self, other):
-        """ Add two axial objects together
-
-        :param other: Axial to add
-        :type other: Axial
-        :return: Axial of new location
-        :rtype: Axial
-        """
         return Axial(self.q + other.q, self.r + other.r, self.s + other.s)
 
     def __sub__(self, other):
-        """ Subtract two axial objects from each other
-
-        :param other: Axial to subtract
-        :type other: Axial
-        :return: Axial of new location
-        :rtype: Axial
-        """
         return Axial(self.q - other.q, self.r - other.r, self.s - other.s)
 
     def __mul__(self, other: int):
-        """ Multiply co-ordinates of axial
-
-        :param other: Number to multiply with
-        :type other: int, float
-        :return: Axial of new location
-        :rtype: Axial
-        """
         return Map.round_axial(self.q * other, self.r * other, self.s * other)
 
     def __hash__(self) -> int:
-        """ Hashes a tuple of the two first values of the co-ordinate
-
-        :return: Hash value of two first co-ordinate values
-        :rtype: int
-        """
         return hash((self.q, self.r))
 
     def __repr__(self) -> str:
@@ -93,11 +54,7 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
         return "q: {0}\tr: {1}\ts: {2}".format(self.q, self.r, self.s)
 
     def get_tuple(self) -> Point:
-        """ Helper method for managing the map table
-
-        :return: Tuple containing first and second coordinate
-        :rtype: Point
-        """
+        """ Helper method returning tuple of first and second coordinate """
         return Point(self.q, self.r)
 
 
@@ -109,16 +66,6 @@ class Hex(Axial):
     """
 
     def __new__(cls, q: int, r: int, s: int = None, transparent: bool = True, passable: bool = True):
-        """ Initialise Hex object
-
-        Errors if (q + r + s != 0)
-
-        :param q: First co-ordinate
-        :param r: Second co-ordinate
-        :param s: Third co-ordinate. If not given, it is calculated to -q -s
-        :param transparent: Whether items in the hex blocks FoV
-        :param passable: Whether items in the hex blocks movement
-        """
         obj = super().__new__(cls, q, r, s)
         obj.transparent = transparent
         obj.passable = passable
@@ -134,7 +81,7 @@ class Hex(Axial):
 
 
 class Map(object):
-    """ Class handling game map"""
+    """ Class handling game map """
 
     TupleAxial = namedtuple("TupleAxial", ["q", "r", "s"])
     Orientation = namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
@@ -150,27 +97,13 @@ class Map(object):
     active_layout = Layout(orientation_pointy, Point(1, 1), Point(0, 0))
 
     def __init__(self, table: dict = None):
-        """ Instantiates the map
-
-        :param table: Optional table to load
-        :type table: dict
-        """
         if not table:
             table = dict()
 
         self.table = table
 
     def add_hex_to_map(self, item: Hex) -> bool:
-        """ Add hex to co-ordinate table
-
-        Adds a hex to the co-ordinate table.
-        Returns false if the co-ordinate is already occupied.
-
-        :param item: Hex to add to table
-        :type item: Hex
-        :return: True if hex is added
-        :rtype: bool
-        """
+        """ Add hex to coordinate table. Returns false if the co-ordinate is already occupied. """
         item_tuple = item.get_tuple()
         print(item_tuple)
         if item_tuple not in self.table:
@@ -180,28 +113,12 @@ class Map(object):
             return False
 
     def get_hex_from_map(self, axial: Axial) -> Hex:
-        """ Gets the hex in the co-ordinate slot of the axial
-
-        :param axial: Co-ordinate object to get hex from
-        :type axial: Axial
-        :return: Hexagon item
-        :rtype: Hex
-        """
+        """ Gets the hex in the co-ordinate slot of the axial """
         return self.table[axial.get_tuple()]
 
     @staticmethod
-    def round_axial(q: float, r: float, s: float = None):
-        """ Round values to get coordinates as integers
-
-        :param q: First co-ordinate
-        :type q: int, float
-        :param r: Second co-ordinate
-        :type r: int, float
-        :param s: Third co-ordinate. Optional.
-        :type s: int, float
-        :return: Axial with int co-ordinates
-        :rtype: Axial
-        """
+    def round_axial(q: float, r: float, s: float = None) -> Axial:
+        """Accepts coordinates as floats and rounds them to the closest valid coordinates as integers. """
         if s is None:
             s = -q - r
 
@@ -224,85 +141,36 @@ class Map(object):
 
     @staticmethod
     def vector_length(vector: Axial) -> float:
-        """ Scalar of an axial vector
-
-        :param vector: Axial to calculate
-        :type vector: Axial
-        :return: Distance to 0,0
-        :rtype: int, float
-        """
+        """ Scalar of an axial vector """
         return (abs(vector.q) + abs(vector.r) + abs(vector.s)) // 2
 
     def distance(self, start: Axial, end: Axial) -> int:
-        """ Calculate scalar between two vectors
-
-        :param start: First object for comparison
-        :type start: Axial
-        :param end: Second object for comparison
-        :type end: Axial
-        :return: Distance between objects
-        :rtype: int
-        """
+        """ Calculate scalar between two vectors """
         return self.vector_length(start - end)
 
-    def get_axial_neighbour_coordinate(self, coordinate: Axial, direction: int):
-        """ Get the co-ordinate of a neighbouring hex
-
-        Finds the co-ordinate of a neighbouring hex.
+    def get_axial_neighbour_coordinate(self, coordinate: Axial, direction: int) -> Axial:
+        """ Get the coordinate of a neighbouring hex
         Direction 0 is right. Direction 3 is left.
-
-        :param coordinate: Starting location
-        :type coordinate: Axial
-        :param direction: Neighbour direction. Int 0-5
-        :type direction: int
-        :return: Neighbouring hex
-        :rtype: Axial
+        Accepts integer modulo 6 representing the direction.
         """
         return coordinate + self.directions[(direction % 6)]
 
     @staticmethod
     def __lerp(start: float, end: float, step: float) -> float:
-        """ Linear interpolation helper function
-
-        :param start: Start value
-        :type start: int, float
-        :param end: Destination value
-        :type end: int, float
-        :param step: Size of step
-        :type step: int, float
-        :return: Current value
-        :rtype: int, float
-        """
+        """ Linear interpolation helper function """
         return start + (end - start) * step
 
-    def __cube_lerp(self, start: TupleAxial, end: TupleAxial, step: float):
-        """ Lerp a cube co-ordinate
-
-        :param start: Start axial
-        :type start: TupleAxial
-        :param end: End axial
-        :type end: TupleAxial
-        :param step: Size of step
-        :type step: int, float
-        :return: Axial of current position in lerp
-        :rtype: Axial
-        """
+    def __cube_lerp(self, start: TupleAxial, end: TupleAxial, step: float) -> Axial:
+        """ Lerp a cube co-ordinate """
         return self.round_axial(self.__lerp(start.q, end.q, step), self.__lerp(start.r, end.r, step),
                                 self.__lerp(start.s, end.s, step))
 
-    def draw_line(self, start: Axial, end: Axial) -> list:
+    def draw_line(self, start: Axial, end: Axial) -> List[Axial]:
         """ Draw line from tuple to destination
 
         Draws a line from itself to another Axial co-ordinate.
         Returns a list of Axial co-ordinates intersecting co-ordinates.
         Co-ordinates are nudged slightly to make the line more consistent
-
-        :param start: Start of line
-        :type start: Axial
-        :param end: End of line
-        :type end: Axial
-        :return: List of Axial objects
-        :rtype: list
         """
         distance = self.distance(start, end)
         start_nudge = self.TupleAxial(start.q + 0.000001, start.r + 0.000001, start.s - 0.000002)
@@ -317,30 +185,14 @@ class Map(object):
 
     @staticmethod
     def hex_to_pixel(coordinate: Axial, layout: Layout = active_layout) -> Point:
-        """ Find pixel co-ordinate of hex
-
-        :param coordinate: Axial location to convert to 2D point
-        :type coordinate: Axial
-        :param layout: Pointy or flat-top layout
-        :type layout: Layout
-        :return: Square co-ordinate of hex
-        :rtype: Point
-        """
+        """ Find pixel coordinate of hex """
         orientation, size, origin = layout.orientation, layout.size, layout.origin
         x = (orientation.f0 * coordinate.q + orientation.f1 * coordinate.r) * size.x
         y = (orientation.f2 * coordinate.q + orientation.f3 * coordinate.r) * size.y
         return Point(x + origin.x, y + origin.y)
 
-    def pixel_to_hex(self, layout: Layout, location: Point):
-        """ Finds the Axial value of a square point
-
-        :param layout: Pointy or flat-top layout
-        :type layout: Layout
-        :param location: Square point to calculate
-        :type location: Point
-        :return: Cubic location of input point
-        :rtype: Axial
-        """
+    def pixel_to_hex(self, layout: Layout, location: Point) -> Axial:
+        """ Finds the Axial value of a square point """
         orientation, size, origin = layout.orientation, layout.size, layout.origin
         pt = Point((location.x - origin.x) / size.x, (location.y - origin.y) / size.y)
         q = orientation.b0 * pt.x + orientation.b1 * pt.y
@@ -348,16 +200,8 @@ class Map(object):
         return self.round_axial(q, r)
 
     @staticmethod
-    def draw_range(center: Axial, radius: int) -> list:
-        """ Find all coordinates within distance from center
-
-        :param center: Center point of range
-        :type center: Axial
-        :param radius: Integer that describes search range
-        :type radius: int
-        :return: List of Axial objects within the range
-        :rtype: list
-        """
+    def draw_range(center: Axial, radius: int) -> List[Axial]:
+        """ Find all coordinates within distance from center """
         results = []
         for dx in range(-radius, radius + 1):
             min_range = max(-radius, -dx - radius)
@@ -368,42 +212,18 @@ class Map(object):
         return results
 
     @staticmethod
-    def intersecting_range(range_a: list, range_b: list) -> set:
-        """ Finds overlapping co-ordinates from two ranges
-
-        :param range_a: List of axial points
-        :type range_a: list
-        :param range_b: List of axial points
-        :type range_b: list
-        :return: Set of points that are in both lists
-        :rtype: set
-        """
+    def intersecting_range(range_a: list, range_b: list) -> Set[Axial]:
+        """ Finds overlapping co-ordinates from two ranges """
         return set(range_a).intersection(range_b)
 
     @staticmethod
     def __hex_corner_offset(layout: Layout, corner: int) -> Point:
-        """ Calculate offset of corner
-
-        :param layout: Pointy or flat-top layout
-        :type layout: Layout
-        :param corner: Direction of corner
-        :type corner: int
-        :return: Offset of corner
-        :rtype: Point
-        """
+        """ Calculate offset of corner """
         angle = 2.0 * math.pi * (layout.orientation.start_angle - corner) / 6
         return Point(layout.size.x * math.cos(angle), layout.size.y * math.sin(angle))
 
-    def hex_corner_list(self, coordinate: Axial, layout: Layout) -> list:
-        """ Pixel co-ordinates of hex corners
-
-        :param coordinate: Center point
-        :type coordinate: Axial
-        :param layout: Pointy or flat-top layout
-        :type layout: Layout
-        :return: List of point objects
-        :rtype: list
-        """
+    def hex_corner_list(self, coordinate: Axial, layout: Layout) -> List[Point]:
+        """ Pixel co-ordinates of hex corners """
         corners = []
         center = self.hex_to_pixel(coordinate, layout)
         for i in range(0, 5):
@@ -412,16 +232,8 @@ class Map(object):
 
         return corners
 
-    def draw_circle(self, center: Axial, radius: int) -> list:
-        """ Draw a circle on the map
-
-        :param center: Center of the circle
-        :type center: Axial
-        :param radius: Radius of the circle
-        :type radius: int
-        :return: List of axial coordinates that make up the circle
-        :rtype: list
-        """
+    def draw_circle(self, center: Axial, radius: int) -> List[Axial]:
+        """ Draw a circle on the map """
 
         # To avoid a multiply by zero issue, set radius to 1 instead of 0
         if radius == 0:
@@ -438,16 +250,8 @@ class Map(object):
 
         return results
 
-    def draw_spiral(self, center: Axial, radius: int) -> list:
-        """ Draw a spiral on the map
-
-        :param center: Center of spiral
-        :type center: Axial
-        :param radius: Radius of spiral
-        :type radius: int
-        :return: Ordered list of axials
-        :rtype: list
-        """
+    def draw_spiral(self, center: Axial, radius: int) -> List[Axial]:
+        """ Draw a spiral on the map """
 
         results = [center]
         for step in range(1, radius):
@@ -455,13 +259,8 @@ class Map(object):
 
         return results
 
-    def get_field_of_view(self, center: Axial, radius: int) -> list:
-        """ Return a list of all tiles that can be seen from center
-        
-        :param center: Point of view to calculate from
-        :param radius: Radius to calculate for
-        :return: List of Hex objects that are visible from center
-        """
+    def get_field_of_view(self, center: Axial, radius: int) -> List[Hex]:
+        """ Return a list of all tiles that can be seen from center """
         results = []
 
         circle = self.draw_circle(center, radius)
@@ -477,13 +276,8 @@ class Map(object):
 
         return results
 
-    def draw_available_movement(self, start: Axial, distance: int) -> set:
-        """ Return a set of possible tiles to move to from start point
-
-        :param start: Start point for movement
-        :param distance: The distance to move
-        :return: Set of possible hexes to move to
-        """
+    def draw_available_movement(self, start: Axial, distance: int) -> Set[Hex]:
+        """ Return a set of possible tiles to move to from start point """
         visited = set().add(self.get_hex_from_map(start))
         fringes = []
         fringes.append(self.get_hex_from_map(start))
