@@ -35,13 +35,13 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
     def __eq__(self, other) -> bool:
         return self.q == other.q and self.r == other.r and self.s == other.s
 
-    def __add__(self, other):
+    def __add__(self, other) -> 'Axial':
         return Axial(self.q + other.q, self.r + other.r, self.s + other.s)
 
-    def __sub__(self, other):
+    def __sub__(self, other) -> 'Axial':
         return Axial(self.q - other.q, self.r - other.r, self.s - other.s)
 
-    def __mul__(self, other: int):
+    def __mul__(self, other: float) -> 'Axial':
         return Map.round_axial(self.q * other, self.r * other, self.s * other)
 
     def __hash__(self) -> int:
