@@ -93,7 +93,7 @@ class Hex(Axial):
 
 class Map(object):
     """ Class handling game map """
-
+    #TODO: Rename class. Name is too similar to the builtin map()
     TupleAxial = namedtuple("TupleAxial", ["q", "r", "s"])
     Orientation = namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
     Layout = namedtuple("Layout", ["orientation", "size", "origin"])
@@ -117,6 +117,10 @@ class Map(object):
 
         self.table = table
 
+    def __iter__(self):
+        return iter(self.table)
+
+    #TODO: Use getter/setter on self.table instead of functions
     def add_hex_to_map(self, item: Hex) -> bool:
         """ Add hex to coordinate table. Returns false if the co-ordinate is already occupied. """
         item_tuple = item.get_tuple()
