@@ -57,6 +57,15 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
         """ Helper method returning tuple of first and second coordinate """
         return Point(self.q, self.r)
 
+    @staticmethod
+    def vector_length(vector: 'Axial') -> float:
+        """ Scalar of an axial vector """
+        return (abs(vector.q) + abs(vector.r) + abs(vector.s)) // 2
+
+    def distance(self, end: 'Axial') -> int:
+        """ Calculate scalar between two vectors """
+        return self.vector_length(self - end)
+
 
 class Hex(Axial):
     """ Object representing a hex on a map. Extends Axial.
@@ -64,6 +73,8 @@ class Hex(Axial):
     Object representing a hex on a map. Extends Axial.
     Any co-ordinate should always resolve to (q + r + s == 0).
     """
+
+    #TODO: Remove hexes. Use composition on hex container objects instead.
 
     def __new__(cls, q: int, r: int, s: int = None, transparent: bool = True, passable: bool = True):
         obj = super().__new__(cls, q, r, s)
@@ -94,9 +105,13 @@ class Map(object):
     orientation_pointy = Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, math.sqrt(3.0) / 3.0,
                                      -1.0 / 3.0,
                                      0.0, 2.0 / 3.0, 0.5)
-    active_layout = Layout(orientation_pointy, Point(1, 1), Point(0, 0))
 
-    def __init__(self, table: dict = None):
+    def __init__(self, default_layout: Layout = None, table: dict = None):
+        if default_layout:
+            self.layout = default_layout
+        else:
+            self.layout = self.Layout(self.orientation_pointy, Point(1, 1), Point(0, 0))
+
         if not table:
             table = dict()
 
@@ -138,15 +153,6 @@ class Map(object):
 
         return Axial(int(rq), int(rr), int(rs))
 
-    @staticmethod
-    def vector_length(vector: Axial) -> float:
-        """ Scalar of an axial vector """
-        return (abs(vector.q) + abs(vector.r) + abs(vector.s)) // 2
-
-    def distance(self, start: Axial, end: Axial) -> int:
-        """ Calculate scalar between two vectors """
-        return self.vector_length(start - end)
-
     def get_axial_neighbour_coordinate(self, coordinate: Axial, direction: int) -> Axial:
         """ Get the coordinate of a neighbouring hex
         Direction 0 is right. Direction 3 is left.
@@ -157,6 +163,7 @@ class Map(object):
     @staticmethod
     def __lerp(start: float, end: float, step: float) -> float:
         """ Linear interpolation helper function """
+        #TODO: Move to other file
         return start + (end - start) * step
 
     def __cube_lerp(self, start: TupleAxial, end: TupleAxial, step: float) -> Axial:
@@ -171,7 +178,7 @@ class Map(object):
         Returns a list of Axial co-ordinates intersecting co-ordinates.
         Co-ordinates are nudged slightly to make the line more consistent
         """
-        distance = self.distance(start, end)
+        distance = start.distance(end)
         start_nudge = self.TupleAxial(start.q + 0.000001, start.r + 0.000001, start.s - 0.000002)
         end_nudge = self.TupleAxial(end.q + 0.000001, end.r + 0.000001, end.s - 0.000002)
         step = 1.0 / max(distance, 1)
@@ -182,16 +189,21 @@ class Map(object):
 
         return results
 
-    @staticmethod
-    def hex_to_pixel(coordinate: Axial, layout: Layout = active_layout) -> Point:
+    def hex_to_pixel(self, coordinate: Axial, layout: Layout = None) -> Point:
         """ Find pixel coordinate of hex """
+        if not layout:
+            layout = self.layout
+
         orientation, size, origin = layout.orientation, layout.size, layout.origin
         x = (orientation.f0 * coordinate.q + orientation.f1 * coordinate.r) * size.x
         y = (orientation.f2 * coordinate.q + orientation.f3 * coordinate.r) * size.y
         return Point(x + origin.x, y + origin.y)
 
-    def pixel_to_hex(self, layout: Layout, location: Point) -> Axial:
+    def pixel_to_hex(self, location: Point, layout: Layout = None) -> Axial:
         """ Finds the Axial value of a square point """
+        if not layout:
+            layout = self.layout
+
         orientation, size, origin = layout.orientation, layout.size, layout.origin
         pt = Point((location.x - origin.x) / size.x, (location.y - origin.y) / size.y)
         q = orientation.b0 * pt.x + orientation.b1 * pt.y
