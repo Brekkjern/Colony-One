@@ -105,7 +105,6 @@ class Map(object):
     def add_hex_to_map(self, item: Hex) -> bool:
         """ Add hex to coordinate table. Returns false if the co-ordinate is already occupied. """
         item_tuple = item.get_tuple()
-        print(item_tuple)
         if item_tuple not in self.table:
             self.table[item_tuple] = item
             return True
