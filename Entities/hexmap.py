@@ -106,11 +106,21 @@ class Map(object):
                                      -1.0 / 3.0,
                                      0.0, 2.0 / 3.0, 0.5)
 
-    def __init__(self, default_layout: Layout = None, table: dict = None):
-        if default_layout:
-            self.layout = default_layout
+    def __init__(self, orientation: Layout = None, table: dict = None, size: Point = None, origin: Point = None):
+        if orientation:
+            self.orientation = orientation
         else:
-            self.layout = self.Layout(self.orientation_pointy, Point(1, 1), Point(0, 0))
+            self.orientation = self.orientation_pointy
+
+        if size:
+            self.size = size
+        else:
+            self.size = Point(0, 0)
+
+        if origin:
+            self.origin = origin
+        else:
+            self.origin = Point(0, 0)
 
         if not table:
             table = dict()
@@ -121,14 +131,13 @@ class Map(object):
         return iter(self.table)
 
     #TODO: Use getter/setter on self.table instead of functions
-    def add_hex_to_map(self, item: Hex) -> bool:
-        """ Add hex to coordinate table. Returns false if the co-ordinate is already occupied. """
+    def add_hex_to_map(self, item: Hex) -> 'Map':
+        """ Add hex to coordinate table. Ignores call if it already exists. """
         item_tuple = item.get_tuple()
         if item_tuple not in self.table:
             self.table[item_tuple] = item
-            return True
-        else:
-            return False
+
+        return self
 
     def get_hex_from_map(self, axial: Axial) -> Hex:
         """ Gets the hex in the co-ordinate slot of the axial """
@@ -193,25 +202,17 @@ class Map(object):
 
         return results
 
-    def hex_to_pixel(self, coordinate: Axial, layout: Layout = None) -> Point:
+    def hex_to_pixel(self, coordinate: Axial) -> Point:
         """ Find pixel coordinate of hex """
-        if not layout:
-            layout = self.layout
+        x = (self.orientation.f0 * coordinate.q + self.orientation.f1 * coordinate.r) * self.size.x
+        y = (self.orientation.f2 * coordinate.q + self.orientation.f3 * coordinate.r) * self.size.y
+        return Point(x + self.origin.x, y + self.origin.y)
 
-        orientation, size, origin = layout.orientation, layout.size, layout.origin
-        x = (orientation.f0 * coordinate.q + orientation.f1 * coordinate.r) * size.x
-        y = (orientation.f2 * coordinate.q + orientation.f3 * coordinate.r) * size.y
-        return Point(x + origin.x, y + origin.y)
-
-    def pixel_to_hex(self, location: Point, layout: Layout = None) -> Axial:
+    def pixel_to_hex(self, location: Point) -> Axial:
         """ Finds the Axial value of a square point """
-        if not layout:
-            layout = self.layout
-
-        orientation, size, origin = layout.orientation, layout.size, layout.origin
-        pt = Point((location.x - origin.x) / size.x, (location.y - origin.y) / size.y)
-        q = orientation.b0 * pt.x + orientation.b1 * pt.y
-        r = orientation.b2 * pt.x + orientation.b3 * pt.y
+        pt = Point((location.x - self.origin.x) / self.size.x, (location.y - self.origin.y) / self.size.y)
+        q = self.orientation.b0 * pt.x + self.orientation.b1 * pt.y
+        r = self.orientation.b2 * pt.x + self.orientation.b3 * pt.y
         return self.round_axial(q, r)
 
     @staticmethod
