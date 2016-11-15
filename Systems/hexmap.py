@@ -74,7 +74,7 @@ class Hex(Axial):
     Any co-ordinate should always resolve to (q + r + s == 0).
     """
 
-    #TODO: Remove hexes. Use composition on hex container objects instead.
+    # TODO: Remove hexes. Use composition on hex container objects instead.
 
     def __new__(cls, q: int, r: int, s: int = None, transparent: bool = True, passable: bool = True):
         obj = super().__new__(cls, q, r, s)
@@ -93,7 +93,7 @@ class Hex(Axial):
 
 class Map(object):
     """ Class handling game map """
-    #TODO: Rename class. Name is too similar to the builtin map()
+    # TODO: Rename class. Name is too similar to the builtin map()
     TupleAxial = namedtuple("TupleAxial", ["q", "r", "s"])
     Orientation = namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
     Layout = namedtuple("Layout", ["orientation", "size", "origin"])
@@ -103,8 +103,7 @@ class Map(object):
 
     # Statics for use in calculating between hex and pixel values
     orientation_pointy = Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, math.sqrt(3.0) / 3.0,
-                                     -1.0 / 3.0,
-                                     0.0, 2.0 / 3.0, 0.5)
+                                     -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5)
 
     def __init__(self, orientation: Layout = None, table: dict = None, size: Point = None, origin: Point = None):
         if orientation:
@@ -130,7 +129,7 @@ class Map(object):
     def __iter__(self):
         return iter(self.table)
 
-    #TODO: Use getter/setter on self.table instead of functions
+    # TODO: Use getter/setter on self.table instead of functions
     def add_hex_to_map(self, item: Hex) -> 'Map':
         """ Add hex to coordinate table. Ignores call if it already exists. """
         item_tuple = item.get_tuple()
@@ -176,7 +175,7 @@ class Map(object):
     @staticmethod
     def __lerp(start: float, end: float, step: float) -> float:
         """ Linear interpolation helper function """
-        #TODO: Move to other file
+        # TODO: Move to other file
         return start + (end - start) * step
 
     def __cube_lerp(self, start: TupleAxial, end: TupleAxial, step: float) -> Axial:
@@ -284,7 +283,7 @@ class Map(object):
             line = self.draw_line(center, point)
             for axial in line:
                 line_hex = self.get_hex_from_map(axial)
-                if not line_hex in results:
+                if line_hex not in results:
                     results.append(line_hex)
                     if not line_hex.transparent:
                         break
@@ -294,8 +293,7 @@ class Map(object):
     def draw_available_movement(self, start: Axial, distance: int) -> Set[Hex]:
         """ Return a set of possible tiles to move to from start point """
         visited = set().add(self.get_hex_from_map(start))
-        fringes = []
-        fringes.append(self.get_hex_from_map(start))
+        fringes = [self.get_hex_from_map(start)]
 
         for i in range(1, distance + 1):
             fringes.append([])

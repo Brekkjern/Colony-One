@@ -11,7 +11,7 @@ class Colony(Entity):
     # Table to hold all references to colony entities. Allows for fast listing of all entities.
     colonies = []
 
-    def __init__(self, entity_id, game_settings, colonists=None, buildings=None, stockpile=None):
+    def __init__(self, entity_id, game_settings, colonists = None, buildings = None, stockpile = None):
         super(Colony, self).__init__(entity_id)
         self.__class__.colonies.append(weakref.proxy(self))
 
@@ -63,7 +63,6 @@ class Colony(Entity):
         # the previous loop as we don't know how much power we have available.
         for building in self.buildings:
             building.tick(self.power_mod)
-
 
     def add_to_stockpile(self, item):
         self.stockpile.append(item)
