@@ -37,5 +37,5 @@ class ColonistWorkplace(object):
             return False
 
     def remove_colonist(self, colonist: Colonist) -> bool:
-        self.assigned_workers.remove(Colonist)
+        self.assigned_workers.remove(colonist)
         return True
