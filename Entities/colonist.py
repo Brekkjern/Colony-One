@@ -2,8 +2,8 @@ import math
 import weakref
 
 import conf
-from Entities.Colonists.skill import Skill
-from Entities.Colonists.trait import Trait
+from Components.skill import Skill
+from Components.trait import Trait
 from Entities.entity import Entity
 from Entities.task import Task
 

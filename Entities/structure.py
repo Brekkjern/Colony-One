@@ -1,7 +1,7 @@
 from Entities.colony import Colony
-from Entities.hexmap import Axial
 from Entities.task import Task
 from Entities.worldentity import WorldEntity
+from Systems.hexmap import Axial
 
 
 class Structure(WorldEntity):

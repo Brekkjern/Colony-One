@@ -232,18 +232,17 @@ class Map(object):
         """ Finds overlapping co-ordinates from two ranges """
         return set(range_a).intersection(range_b)
 
-    @staticmethod
-    def __hex_corner_offset(layout: Layout, corner: int) -> Point:
+    def __hex_corner_offset(self, corner: int) -> Point:
         """ Calculate offset of corner """
-        angle = 2.0 * math.pi * (layout.orientation.start_angle - corner) / 6
-        return Point(layout.size.x * math.cos(angle), layout.size.y * math.sin(angle))
+        angle = 2.0 * math.pi * (self.orientation.start_angle - corner) / 6
+        return Point(self.size.x * math.cos(angle), self.size.y * math.sin(angle))
 
-    def hex_corner_list(self, coordinate: Axial, layout: Layout) -> List[Point]:
+    def hex_corner_list(self, coordinate: Axial) -> List[Point]:
         """ Pixel co-ordinates of hex corners """
         corners = []
-        center = self.hex_to_pixel(coordinate, layout)
+        center = self.hex_to_pixel(coordinate)
         for i in range(0, 5):
-            offset = self.__hex_corner_offset(layout, i)
+            offset = self.__hex_corner_offset(i)
             corners.append(Point(center.x + offset.x, center.y + offset.y))
 
         return corners

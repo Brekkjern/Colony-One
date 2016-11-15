@@ -1,7 +1,7 @@
 import weakref
 
-from .Buildings.powerproperties import PowerGenerator, PowerConsumer
-from .Colonists.colonist import Colonist
+from Components.powerproperties import PowerGenerator, PowerConsumer
+from Entities.colonist import Colonist
 from .entity import Entity
 
 

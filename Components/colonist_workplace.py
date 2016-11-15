@@ -1,6 +1,6 @@
 from typing import List
 
-from Entities.Colonists.colonist import Colonist
+from Entities.colonist import Colonist
 
 
 class ColonistWorkplace(object):
