@@ -2,7 +2,6 @@ import math
 from collections import namedtuple
 from typing import List, Set
 
-from Entities.tile import Tile
 from common import Point, lerp
 
 Orientation = namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
@@ -127,7 +126,7 @@ class TileMap(object):
 
         return self
 
-    def get_hex_from_map(self, axial: Axial) -> Tile:
+    def get_hex_from_map(self, axial: Axial) -> 'Tile':
         """ Gets the hex in the co-ordinate slot of the axial """
         return self.table[axial.get_tuple()]
 
@@ -244,7 +243,7 @@ class TileMap(object):
 
         return results
 
-    def draw_available_movement(self, start: Axial, distance: int) -> Set[Tile]:
+    def draw_available_movement(self, start: Axial, distance: int) -> Set['Tile']:
         """ Return a set of possible tiles to move to from start point """
         visited = set().add(self.get_hex_from_map(start))
         fringes = [self.get_hex_from_map(start)]
@@ -261,7 +260,7 @@ class TileMap(object):
 
         return visited
 
-    def draw_field_of_view(self, center: Axial, radius: int) -> List[Tile]:
+    def draw_field_of_view(self, center: Axial, radius: int) -> List['Tile']:
         """ Return a list of all tiles that can be seen from center """
         results = []
 
