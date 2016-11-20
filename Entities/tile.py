@@ -1,8 +1,13 @@
-import Components.renderer as renderer
-import Systems.hexmap as hexmap
+import Entities.entity
+from Components.renderer import Renderer
+from Systems.hexmap import Axial
 
 
-class Tile(object):
-    def __init__(self, position: hexmap.Axial, rendering_component: renderer.Renderer):
-        self.position = position
+class Tile(Entities.entity.Entity):
+    def __init__(self, entity_id, location: Axial, rendering_component: Renderer):
+        super(Tile, self).__init__(entity_id)
+        self.location = location
         self.renderer = rendering_component
+
+    def prepare_render(self) -> Renderer:
+        self.renderer.prepare_render(self.location.pixel_position())

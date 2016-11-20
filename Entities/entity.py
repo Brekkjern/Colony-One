@@ -8,10 +8,12 @@ class Entity(object):
     def __init__(self, entity_id: int):
         self.__class__.entities.append(weakref.proxy(self))
         self.entity_id = entity_id
-        self.alive = True
 
     def update(self, *args):
         pass
 
     def tick(self, *args):
+        pass
+
+    def prepare_render(self) -> None:
         pass
