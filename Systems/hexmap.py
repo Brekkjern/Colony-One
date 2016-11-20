@@ -1,10 +1,13 @@
 import math
 from collections import namedtuple
-from typing import List
-from typing import Set
+from typing import List, Set
 
-Point = namedtuple("Point", ["x", "y"])
+from Entities.tile import Tile
+from common import Point, lerp
 
+Orientation = namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
+orientation_pointy = Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, math.sqrt(3.0) / 3.0, -1.0 / 3.0,
+                                 0.0, 2.0 / 3.0, 0.5)
 
 class Axial(namedtuple("_Axial", ["q", "r", "s"])):
     """ Object representing a point in cubic space.
@@ -42,7 +45,7 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
         return Axial(self.q - other.q, self.r - other.r, self.s - other.s)
 
     def __mul__(self, other: float) -> 'Axial':
-        return Map.round_axial(self.q * other, self.r * other, self.s * other)
+        return TileMap.round_axial(self.q * other, self.r * other, self.s * other)
 
     def __hash__(self) -> int:
         return hash((self.q, self.r))
@@ -65,6 +68,12 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
     def distance(self, end: 'Axial') -> int:
         """ Calculate scalar between two vectors """
         return self.vector_length(self - end)
+
+    def pixel_position(self) -> Point:
+        """ Find pixel self of hex """
+        x = (orientation_pointy.f0 * self.q + orientation_pointy.f1 * self.r)
+        y = (orientation_pointy.f2 * self.q + orientation_pointy.f3 * self.r)
+        return Point(x, y)
 
 
 class Hex(Axial):
@@ -91,36 +100,16 @@ class Hex(Axial):
                                                                                 self.transparent, self.passable)
 
 
-class Map(object):
+class TileMap(object):
     """ Class handling game map """
-    # TODO: Rename class. Name is too similar to the builtin map()
+
+    # Helper tuple for use in __cube_lerp
     TupleAxial = namedtuple("TupleAxial", ["q", "r", "s"])
-    Orientation = namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
-    Layout = namedtuple("Layout", ["orientation", "size", "origin"])
 
     # Helper table to find axial neighbours
     directions = [Axial(+1, 0), Axial(+1, -1), Axial(0, -1), Axial(-1, 0), Axial(-1, +1), Axial(0, +1)]
 
-    # Statics for use in calculating between hex and pixel values
-    orientation_pointy = Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, math.sqrt(3.0) / 3.0,
-                                     -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5)
-
-    def __init__(self, orientation: Layout = None, table: dict = None, size: Point = None, origin: Point = None):
-        if orientation:
-            self.orientation = orientation
-        else:
-            self.orientation = self.orientation_pointy
-
-        if size:
-            self.size = size
-        else:
-            self.size = Point(0, 0)
-
-        if origin:
-            self.origin = origin
-        else:
-            self.origin = Point(0, 0)
-
+    def __init__(self, table: dict = None):
         if not table:
             table = dict()
 
@@ -130,15 +119,15 @@ class Map(object):
         return iter(self.table)
 
     # TODO: Use getter/setter on self.table instead of functions
-    def add_hex_to_map(self, item: Hex) -> 'Map':
+    def add_hex_to_map(self, item: object, location: Axial) -> 'TileMap':
         """ Add hex to coordinate table. Ignores call if it already exists. """
-        item_tuple = item.get_tuple()
+        item_tuple = location.get_tuple()
         if item_tuple not in self.table:
             self.table[item_tuple] = item
 
         return self
 
-    def get_hex_from_map(self, axial: Axial) -> Hex:
+    def get_hex_from_map(self, axial: Axial) -> Tile:
         """ Gets the hex in the co-ordinate slot of the axial """
         return self.table[axial.get_tuple()]
 
@@ -172,16 +161,30 @@ class Map(object):
         """
         return coordinate + self.directions[(direction % 6)]
 
-    @staticmethod
-    def __lerp(start: float, end: float, step: float) -> float:
-        """ Linear interpolation helper function """
-        # TODO: Move to other file
-        return start + (end - start) * step
-
     def __cube_lerp(self, start: TupleAxial, end: TupleAxial, step: float) -> Axial:
         """ Lerp a cube co-ordinate """
-        return self.round_axial(self.__lerp(start.q, end.q, step), self.__lerp(start.r, end.r, step),
-                                self.__lerp(start.s, end.s, step))
+        return self.round_axial(lerp(start.q, end.q, step), lerp(start.r, end.r, step), lerp(start.s, end.s, step))
+
+    def __hex_corner_offset(self, corner: int) -> Point:
+        """ Calculate offset of corner """
+        angle = 2.0 * math.pi * (orientation_pointy.start_angle - corner) / 6
+        return Point(math.cos(angle), math.sin(angle))
+
+    def pixel_to_hex(self, location: Point) -> Axial:
+        """ Finds the Axial value of a square point """
+        q = orientation_pointy.b0 * location.x + orientation_pointy.b1 * location.y
+        r = orientation_pointy.b2 * location.x + orientation_pointy.b3 * location.y
+        return self.round_axial(q, r)
+
+    def hex_corner_list(self, coordinate: Axial) -> List[Point]:
+        """ Pixel co-ordinates of hex corners """
+        corners = []
+        center = coordinate.pixel_position()
+        for i in range(0, 5):
+            offset = self.__hex_corner_offset(i)
+            corners.append(Point(center.x + offset.x, center.y + offset.y))
+
+        return corners
 
     def draw_line(self, start: Axial, end: Axial) -> List[Axial]:
         """ Draw line from tuple to destination
@@ -201,19 +204,6 @@ class Map(object):
 
         return results
 
-    def hex_to_pixel(self, coordinate: Axial) -> Point:
-        """ Find pixel coordinate of hex """
-        x = (self.orientation.f0 * coordinate.q + self.orientation.f1 * coordinate.r) * self.size.x
-        y = (self.orientation.f2 * coordinate.q + self.orientation.f3 * coordinate.r) * self.size.y
-        return Point(x + self.origin.x, y + self.origin.y)
-
-    def pixel_to_hex(self, location: Point) -> Axial:
-        """ Finds the Axial value of a square point """
-        pt = Point((location.x - self.origin.x) / self.size.x, (location.y - self.origin.y) / self.size.y)
-        q = self.orientation.b0 * pt.x + self.orientation.b1 * pt.y
-        r = self.orientation.b2 * pt.x + self.orientation.b3 * pt.y
-        return self.round_axial(q, r)
-
     @staticmethod
     def draw_range(center: Axial, radius: int) -> List[Axial]:
         """ Find all coordinates within distance from center """
@@ -226,34 +216,15 @@ class Map(object):
 
         return results
 
-    @staticmethod
-    def intersecting_range(range_a: list, range_b: list) -> Set[Axial]:
-        """ Finds overlapping co-ordinates from two ranges """
-        return set(range_a).intersection(range_b)
-
-    def __hex_corner_offset(self, corner: int) -> Point:
-        """ Calculate offset of corner """
-        angle = 2.0 * math.pi * (self.orientation.start_angle - corner) / 6
-        return Point(self.size.x * math.cos(angle), self.size.y * math.sin(angle))
-
-    def hex_corner_list(self, coordinate: Axial) -> List[Point]:
-        """ Pixel co-ordinates of hex corners """
-        corners = []
-        center = self.hex_to_pixel(coordinate)
-        for i in range(0, 5):
-            offset = self.__hex_corner_offset(i)
-            corners.append(Point(center.x + offset.x, center.y + offset.y))
-
-        return corners
-
     def draw_circle(self, center: Axial, radius: int) -> List[Axial]:
         """ Draw a circle on the map """
 
-        # To avoid a multiply by zero issue, set radius to 1 instead of 0
-        if radius == 0:
-            radius = 1
-
         results = []
+
+        # Return only center if range is 0.
+        if radius == 0:
+            results.append(center)
+            return results
 
         cube = center + (self.get_axial_neighbour_coordinate(center, 4) * radius)
 
@@ -273,7 +244,24 @@ class Map(object):
 
         return results
 
-    def get_field_of_view(self, center: Axial, radius: int) -> List[Hex]:
+    def draw_available_movement(self, start: Axial, distance: int) -> Set[Tile]:
+        """ Return a set of possible tiles to move to from start point """
+        visited = set().add(self.get_hex_from_map(start))
+        fringes = [self.get_hex_from_map(start)]
+
+        for i in range(1, distance + 1):
+            fringes.append([])
+            for cube in fringes[i - 1]:
+                for direction in range(0, 6):
+                    neighbour = self.get_hex_from_map(self.get_axial_neighbour_coordinate(cube, direction))
+                    # TODO: Tiles do not have the passable property that the Hex class had.
+                    if neighbour not in visited and neighbour.passable:
+                        visited.add(neighbour)
+                        fringes[i].append(neighbour)
+
+        return visited
+
+    def draw_field_of_view(self, center: Axial, radius: int) -> List[Tile]:
         """ Return a list of all tiles that can be seen from center """
         results = []
 
@@ -285,23 +273,13 @@ class Map(object):
                 line_hex = self.get_hex_from_map(axial)
                 if line_hex not in results:
                     results.append(line_hex)
+                    # TODO: Tiles do not have the transparency property that the Hex class had.
                     if not line_hex.transparent:
                         break
 
         return results
 
-    def draw_available_movement(self, start: Axial, distance: int) -> Set[Hex]:
-        """ Return a set of possible tiles to move to from start point """
-        visited = set().add(self.get_hex_from_map(start))
-        fringes = [self.get_hex_from_map(start)]
-
-        for i in range(1, distance + 1):
-            fringes.append([])
-            for cube in fringes[i - 1]:
-                for direction in range(0, 6):
-                    neighbour = self.get_hex_from_map(self.get_axial_neighbour_coordinate(cube, direction))
-                    if neighbour not in visited and neighbour.passable:
-                        visited.add(neighbour)
-                        fringes[i].append(neighbour)
-
-        return visited
+    @staticmethod
+    def get_intersecting_range(range_a: list, range_b: list) -> Set[Axial]:
+        """ Finds overlapping co-ordinates from two ranges """
+        return set(range_a).intersection(range_b)
