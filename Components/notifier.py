@@ -1,7 +1,7 @@
 from typing import List
 
 
-class Subject(object):
+class Notifier(object):
     """ The observed part in an observer system.
 
     The subject component should be attached to the object that generates the events.
