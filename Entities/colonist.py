@@ -2,6 +2,7 @@ import math
 import weakref
 
 import conf
+from Components.notifier import Notifier
 from Components.skill import Skill
 from Components.trait import Trait
 from Entities.entity import Entity
@@ -33,10 +34,11 @@ class Colonist(Entity):
         self.traits = []
         self.skills = {}
 
+        # Create notifier
+        self.notifier = Notifier()
+
     def update(self):
         super(Colonist, self).update()
-        if self.health > 0:
-            self.dead = True
 
     def tick(self):
         super(Colonist, self).tick()
@@ -44,11 +46,7 @@ class Colonist(Entity):
         # Reduce hunger.
         self.hunger -= 1
 
-        if self.get_age() < self.life_expectancy():
-            self.dead = True
-
-        if self.dead:
-            print("DEBUG: Colonist {} died on tick {}.".format(self.entity_id, conf.tick))
+        self.check_death()
 
     # def get_attribute_value(self, attribute: str) -> float:
     #     total_modifier = 0
@@ -58,7 +56,17 @@ class Colonist(Entity):
     #
     #     return default_attribute_value + total_modifier
 
-    def get_age(self) -> int:
+    def check_death(self):
+        if self.age() < self.life_expectancy():
+            self.dead = True
+
+        if self.health > 0:
+            self.dead = True
+
+        if self.dead:
+            self.notifier.notify_observers(self, "COLONIST_DEAD")
+
+    def age(self) -> int:
         return conf.tick - self._creation_tick
 
     def cache_trait_values(self):
