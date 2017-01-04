@@ -64,7 +64,7 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
         """ Scalar of an axial vector """
         return (abs(vector.q) + abs(vector.r) + abs(vector.s)) // 2
 
-    def distance(self, end: 'Axial') -> int:
+    def distance(self, end: 'Axial') -> float:
         """ Calculate scalar between two vectors """
         return self.vector_length(self - end)
 
@@ -109,10 +109,10 @@ class TileMap(object):
     directions = [Axial(+1, 0), Axial(+1, -1), Axial(0, -1), Axial(-1, 0), Axial(-1, +1), Axial(0, +1)]
 
     def __init__(self, table: dict = None):
-        if not table:
-            table = dict()
-
-        self.table = table
+        if table:
+            self.table = table
+        else:
+            self.table = dict()
 
     def __iter__(self):
         return iter(self.table)

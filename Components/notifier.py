@@ -10,10 +10,10 @@ class Notifier(object):
     """
 
     def __init__(self, observers: List[object] = None):
-        if not observers:
-            observers = []
-
-        self.observers = observers
+        if observers:
+            self.observers = observers
+        else:
+            self.observers = []
 
     def add_observer(self, observer: object):
         if not observer in self.observers:
