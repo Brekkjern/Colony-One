@@ -1,5 +1,6 @@
 import math
 import weakref
+from typing import List
 
 import conf
 from Components.notifier import Notifier
@@ -20,9 +21,14 @@ class Colonist(Entity):
     colonists = []
 
     def __init__(self, entity_id: int, morale: float = 100, health: float = 100, creation_tick: int = None,
-                 hunger: float = 0):
+                 hunger: float = 0, morale_events: List[Morale_Event] = None):
         super(Colonist, self).__init__(entity_id)
         self.__class__.colonists.append(weakref.proxy(self))
+
+        if morale_events:
+            self.morale_events = morale_events
+        else:
+            self.morale_events = []
 
         self.morale = morale
         self.health = health
@@ -47,6 +53,8 @@ class Colonist(Entity):
         self.hunger -= 1
 
         self.check_death()
+
+        self.morale += self.get_morale_modifier()
 
     # def get_attribute_value(self, attribute: str) -> float:
     #     total_modifier = 0
@@ -89,14 +97,20 @@ class Colonist(Entity):
             self.cache_trait_values()
             return True
 
-    def get_morale(self) -> float:
-        return conf.game_settings['morale'] * self.morale
+    def get_morale_modifier(self) -> float:
+        morale_modifier = 0
+
+        for event in self.morale_events:
+            morale_modifier += event.get_current_modifier
+
+        return morale_modifier
+
 
     def do_work(self, task: Task) -> float:
         skill = self.get_skill(task.skill)
         attributes = self.attributes[skill.primary]
         attributes *= (self.attributes[skill.primary] / 2)
-        return self.get_morale() * self.health * attributes
+        return self.morale * self.health * attributes
 
     def change_health(self, target: float, divider: float) -> float:
         return (target - self.health) / divider
@@ -122,3 +136,16 @@ class Attribute(dict):
 
     def __missing__(self, key):
         return default_attribute_value
+
+
+class Morale_Event(object):
+    def __init__(self, modifier: float, decrease: float):
+        self.modifier = modifier
+        self.dropoff = decrease
+        self.creation_tick = conf.tick
+
+    def get_current_modifier(self) -> float:
+        return (self.dropoff * (conf.tick - self.creation_tick)) + self.modifier
+
+    def get_removal_tick(self) -> int:
+        return int(self.creation_tick + (self.modifier / self.dropoff))
