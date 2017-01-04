@@ -9,7 +9,7 @@ from common import Point
 
 
 class Renderer(object):
-    def __init__(self, screen_size: Point, background_colour: Tuple[int]):
+    def __init__(self, screen_size: Point, background_colour: Tuple[int, int, int]):
         self.screen_size = screen_size
         self.background = background_colour
 
