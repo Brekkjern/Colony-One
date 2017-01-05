@@ -1,4 +1,8 @@
+import logging
 from typing import List
+
+logger = logging.getLogger(__name__)
+
 
 
 class Notifier(object):
@@ -23,5 +27,12 @@ class Notifier(object):
         self.observers.remove(observer)
 
     def notify_observers(self, entity, event):
+        """Calls the observer_notify method of the observers
+
+        If that method isn't defined an error is logged.
+        """
         for observer in self.observers:
-            observer.onNotify(entity, event)
+            try:
+                observer.observer_notify(entity, event)
+            except NameError:
+                logger.error("Notifier: Undefined method on {0}. Event: {1}".format(entity, event))
