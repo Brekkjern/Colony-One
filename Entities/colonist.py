@@ -21,14 +21,19 @@ class Colonist(Entity):
     colonists = []
 
     def __init__(self, entity_id: int, morale: float = 100, health: float = 100, creation_tick: int = None,
-                 hunger: float = 0, morale_events: List[Morale_Event] = None):
+                 hunger: float = 0, morale_events: List[Morale_Event] = None, notifier: Notifier = None):
         super(Colonist, self).__init__(entity_id)
         self.__class__.colonists.append(weakref.proxy(self))
 
         if morale_events:
-            self.morale_events = morale_events
+            self._morale_events = morale_events
         else:
-            self.morale_events = []
+            self._morale_events = []
+
+        if notifier:
+            self.notifier = notifier
+        else:
+            self.notifier = Notifier()
 
         self.morale = morale
         self.health = health
@@ -39,9 +44,6 @@ class Colonist(Entity):
         # Applied traits and skills
         self.traits = []
         self.skills = {}
-
-        # Create notifier
-        self.notifier = Notifier()
 
     def update(self):
         super(Colonist, self).update()
@@ -54,7 +56,7 @@ class Colonist(Entity):
 
         self.check_death()
 
-        self.morale += self.get_morale_modifier()
+        self.morale += self.calculate_morale_modifiers()
 
     # def get_attribute_value(self, attribute: str) -> float:
     #     total_modifier = 0
@@ -97,11 +99,18 @@ class Colonist(Entity):
             self.cache_trait_values()
             return True
 
-    def get_morale_modifier(self) -> float:
+    def calculate_morale_modifiers(self) -> float:
+        """Returns total morale modifier and removes modifiers that have expired"""
         morale_modifier = 0
+        morale_events = []
 
-        for event in self.morale_events:
-            morale_modifier += event.get_current_modifier
+        for event in self._morale_events:
+            morale_modifier += event.get_event_modifier
+
+            if event.get_removal_tick() > conf.tick:
+                morale_events.append(event)
+
+        self._morale_events = morale_events
 
         return morale_modifier
 
@@ -142,10 +151,10 @@ class Morale_Event(object):
     def __init__(self, modifier: float, decrease: float):
         self.modifier = modifier
         self.dropoff = decrease
-        self.creation_tick = conf.tick
+        self._creation_tick = conf.tick
 
-    def get_current_modifier(self) -> float:
-        return (self.dropoff * (conf.tick - self.creation_tick)) + self.modifier
+    def get_event_modifier(self) -> float:
+        return (self.dropoff * (conf.tick - self._creation_tick)) + self.modifier
 
     def get_removal_tick(self) -> int:
-        return int(self.creation_tick + (self.modifier / self.dropoff))
+        return int(self._creation_tick + (self.modifier / self.dropoff))
