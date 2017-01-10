@@ -14,6 +14,3 @@ class Entity(object):
 
     def tick(self, *args):
         pass
-
-    def prepare_render(self) -> None:
-        pass

@@ -9,5 +9,3 @@ class Tile(Entities.entity.Entity):
         self.location = location
         self.renderer = rendering_component
 
-    def prepare_render(self) -> Renderer:
-        self.renderer.prepare_render(self.location.pixel_position())

@@ -59,6 +59,13 @@ class Axial(namedtuple("_Axial", ["q", "r", "s"])):
         """ Helper method returning tuple of first and second coordinate """
         return Point(self.q, self.r)
 
+    def move(self, position: 'Axial') -> 'Axial':
+        self.q = position.q
+        self.r = position.r
+        self.s = position.s
+        return self
+
+
     @staticmethod
     def vector_length(vector: 'Axial') -> float:
         """ Scalar of an axial vector """

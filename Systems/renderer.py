@@ -14,13 +14,11 @@ class Renderer(object):
         self.background = background_colour
 
         pygame.init()
+        pygame.font.init()
         self.screen = pygame.display.set_mode((self.screen_size.x, self.screen_size.y))
         self.screen.fill(self.background)
 
     def sort_components(self):
-        for entity in Entity.entities:
-            entity.prepare_render()
-
         CompRender.renderers.sort(key = lambda entry: (entry.get_pixel_location().x, entry.rendering_layer))
 
     def render_component(self):
