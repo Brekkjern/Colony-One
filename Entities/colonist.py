@@ -148,13 +148,13 @@ class Attribute(dict):
 
 
 class Morale_Event(object):
-    def __init__(self, modifier: float, decrease: float):
+    def __init__(self, modifier: float, falloff: float):
         self.modifier = modifier
-        self.dropoff = decrease
+        self.falloff = falloff
         self._creation_tick = conf.tick
 
     def get_event_modifier(self) -> float:
-        return (self.dropoff * (conf.tick - self._creation_tick)) + self.modifier
+        return (self.falloff * (conf.tick - self._creation_tick)) + self.modifier
 
     def get_removal_tick(self) -> int:
-        return int(self._creation_tick + (self.modifier / self.dropoff))
+        return int(self._creation_tick + (self.modifier / self.falloff))
