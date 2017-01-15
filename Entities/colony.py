@@ -1,5 +1,6 @@
 import weakref
 
+import common
 from Components.notifier import Notifier
 from Components.powerproperties import PowerGenerator, PowerConsumer
 from Entities.colonist import Colonist
@@ -64,7 +65,7 @@ class Colony(Entity):
                 self.power_production += building.power_consumption
 
         # Update the power production modifier
-        self.power_mod = clamp(self.power_production / self.power_consumption, 0, 1)
+        self.power_mod = common.clamp(self.power_production / self.power_consumption, 0, 1)
 
         # Run the tick on all buildings.
         # As far as I am aware this isn't possible to run in the same loop as
@@ -79,7 +80,3 @@ class Colony(Entity):
         colonist = Colonist(self.game_settings)
         self.colonists.append(colonist)
         return colonist
-
-
-def clamp(value, min_value, max_value):
-    return max(min(value, max_value), min_value)

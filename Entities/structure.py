@@ -1,3 +1,4 @@
+import common
 from Entities.colony import Colony
 from Entities.task import Task
 from Entities.worldentity import WorldEntity
@@ -43,7 +44,7 @@ class Structure(WorldEntity):
     @__health.setter
     def __health(self, value: float) -> None:
         if not self.destroyed:
-            self.__health = clamp(value, 0, self.max_health)
+            self.__health = common.clamp(value, 0, self.max_health)
 
         if self.__health <= 0:
             self.destroyed = True
@@ -66,5 +67,3 @@ class Structure(WorldEntity):
             return None
 
 
-def clamp(value, min_value, max_value):
-    return max(min(value, max_value), min_value)
