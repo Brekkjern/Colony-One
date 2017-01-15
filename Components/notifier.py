@@ -1,4 +1,5 @@
 import logging
+import weakref
 from typing import List
 
 logger = logging.getLogger(__name__)
@@ -21,7 +22,7 @@ class Notifier(object):
 
     def add_observer(self, observer: object):
         if not observer in self.observers:
-            self.observers.append(observer)
+            self.observers.append(weakref.proxy(observer))
 
     def remove_observer(self, observer: object):
         self.observers.remove(observer)

@@ -1,5 +1,6 @@
 import weakref
 
+from Components.notifier import Notifier
 from Components.powerproperties import PowerGenerator, PowerConsumer
 from Entities.colonist import Colonist
 from .entity import Entity
@@ -11,7 +12,8 @@ class Colony(Entity):
     # Table to hold all references to colony entities. Allows for fast listing of all entities.
     colonies = []
 
-    def __init__(self, entity_id, game_settings, colonists = None, buildings = None, stockpile = None):
+    def __init__(self, entity_id, game_settings, colonists=None, buildings=None, stockpile=None,
+                 notifier: Notifier = None):
         super(Colony, self).__init__(entity_id)
         self.__class__.colonies.append(weakref.proxy(self))
 
@@ -23,6 +25,12 @@ class Colony(Entity):
 
         if not stockpile:
             stockpile = []
+
+        if notifier:
+            self.notifier = notifier
+        else:
+            self.notifier = Notifier()
+
 
         self.colonists = colonists
         self.buildings = buildings
