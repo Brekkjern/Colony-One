@@ -11,6 +11,9 @@ class Renderer(object):
     renderers = []  # type: List['Renderer']
 
     def __init__(self, location: Axial, rendering_layer: int, texture, texture_center_offset: Point, size: Point):
+
+        # TODO: Uncouple axial location from class
+        # TODO: Put the texture into it's own class with its own offsets.
         self.__class__.renderers.append(weakref.proxy(self))
         self.location = location
         self.rendering_layer = rendering_layer

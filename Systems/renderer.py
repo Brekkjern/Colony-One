@@ -4,7 +4,6 @@ import pygame
 import pygame.locals
 
 from Components.renderer import Renderer as CompRender
-from Entities.entity import Entity
 from common import Point
 
 

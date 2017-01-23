@@ -5,6 +5,9 @@ NumAlias = Union[float, int]
 
 Point = namedtuple("Point", ["x", "y"])
 
+color = {"black": (0,0,0),
+         "white": (255,255,255)}
+
 
 def lerp(start: float, end: float, step: float) -> float:
     """ Linear interpolation helper function """
